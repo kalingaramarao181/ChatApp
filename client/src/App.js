@@ -1,9 +1,9 @@
 import './App.css';
-import Home from './Components/Home';
-import Navbar from './Components/Navbar';
 import {BrowserRouter,Route,Switch} from 'react-router-dom';
-import Signin from './Components/Signin';
-import Login from './Components/Login';
+import Home from './Components/Home';
+import Login from './Components/Login'
+import Signin from './Components/Signin'
+import Navbar from './Components/Navbar';
 
 function App() {
   return (
