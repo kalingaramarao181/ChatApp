@@ -1,0 +1,79 @@
+.Home-main-container{
+    background-image: url("/public/images/bg6.png");
+    background-size: cover;
+    height: 80vh;
+}
+.home-main-card-container{
+    padding: 100px;
+}
+.home-main-heading{
+    color: white;
+    font-size: 50px;
+    font-family: roboto;
+}
+
+.echo-span-tag{
+ color: rgb(241, 183, 21);
+ font-size: 55px;
+ font-weight: bold;
+}
+.home-manin-paragraph{
+    color: white;
+    width: 630px;
+    padding-top: 20px;
+    font-size: 20px;
+    font-family: roboto;
+}
+.home-main-button{
+    background-color: rgb(4, 75, 133);
+    padding: 5px;
+    width: 200px;
+    margin-top: 10px;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: roboto;
+    border-radius: 5px;
+}
+.home-main-button:hover{
+    background-color: rgb(187, 100, 1);
+}
+.signin-main-container-home{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+.home-signin-main-card-container{
+    margin: 80px;
+    width: 300px;
+    padding: 20px;
+    box-shadow: 0 2px 8px 0 rgba(14, 13, 13, 0.678), 0 4px 20px 0 rgba(0, 0, 0, 0.603);
+}
+.home-signin-card-container{
+    display: flex;
+}
+.signin-icon{
+    font-size: 39px;
+    padding-left: 10px;
+    color: rgb(187, 100, 1);
+}
+.home-signin-heading{
+    font-size: 36px;   
+    font-family: roboto;
+    font-weight: bold;
+}
+.home-signin-button{
+    width: 250px;
+    padding: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: rgb(187, 100, 1);
+  border: 10px;
+  border-radius: 5px;
+    color: white;
+
+
+}
+.home-signin-paragraph{
+    font-size: 16px;
+}
