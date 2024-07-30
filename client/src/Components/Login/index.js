@@ -1,8 +1,8 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { baseUrl } from "../config";
 import Cookies from "js-cookie";
+
 const Login = () => {
   const [data, setData] = useState({
     email: "",
@@ -11,21 +11,22 @@ const Login = () => {
 
   const { email, password } = data;
 
-  const onChangehandler = (e) => {
+  const onChangeHandler = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
-  const submithandler = (e) => {
+  const submitHandler = (e) => {
     e.preventDefault();
     axios
-      .post(`${baseUrl}login`, {data} )
+      .post(`${baseUrl}login`, data)  // Sending data directly instead of {data}
       .then((res) => {
         console.log(res.data.message);
         Cookies.set("jwtToken", res.data.token, { expires: 30 });
       })
       .catch((err) => {
-        alert(err.error);
-        console.log(err);
+        // Improved error handling
+        console.error('Login Error:', err.response ? err.response.data : err.message);
+        alert(err.response ? err.response.data.error : err.message);
       });
   };
 
@@ -33,8 +34,8 @@ const Login = () => {
     <>
       <div className="sign-main-container">
         <div className="sign-form-full-container">
-          <h1 className="sign-heading">Signin Form</h1>
-          <form onSubmit={submithandler}>
+          <h1 className="sign-heading">Login Form</h1>
+          <form onSubmit={submitHandler}>
             <div className="input-full-container">
               <label className="sign-paragraph">Email</label>
               <input
@@ -42,7 +43,7 @@ const Login = () => {
                 className="sign-input-tag"
                 name="email"
                 value={email}
-                onChange={onChangehandler}
+                onChange={onChangeHandler}
                 required
               />
               <label className="sign-paragraph">Password</label>
@@ -51,17 +52,16 @@ const Login = () => {
                 className="sign-input-tag"
                 name="password"
                 value={password}
-                onChange={onChangehandler}
+                onChange={onChangeHandler}
                 required
               />
-
               <input type="submit" className="sign-input-tag-submit" />
             </div>
           </form>
         </div>
         <div>
           <img
-            src="images\slide-2.png"
+            src="images/slide-2.png"
             alt="signin-img"
             className="signin-image"
           />
