@@ -4,6 +4,7 @@ import Home from './Components/Home';
 import Login from './Components/Login'
 import Signin from './Components/Signin'
 import Navbar from './Components/Navbar';
+import Chat from './Components/Messages';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route path='/' exact component={Home} />
       <Route path='/Login' exact component={Login} />
       <Route path='/Signin' exact component={Signin} />
+      <Route path='/chat' exact component={Chat} />
     </Switch>
     </BrowserRouter>
 
