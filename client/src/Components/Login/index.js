@@ -3,7 +3,10 @@ import axios from "axios";
 import { baseUrl } from "../config";
 import Cookies from "js-cookie";
 
-const Login = () => {
+const Login = (props) => {
+  
+  const {history} = props;
+
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -22,6 +25,9 @@ const Login = () => {
       .then((res) => {
         console.log(res.data.message);
         Cookies.set("jwtToken", res.data.token, { expires: 30 });
+        localStorage.setItem('userdata',JSON.stringify(res.data.user))
+        history.replace('/chat')
+        window.location.reload()
       })
       .catch((err) => {
         // Improved error handling
@@ -29,6 +35,7 @@ const Login = () => {
         alert(err.response ? err.response.data.error : err.message);
       });
   };
+
 
   return (
     <>
