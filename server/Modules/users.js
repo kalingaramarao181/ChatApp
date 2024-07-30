@@ -4,10 +4,8 @@ const db = require('./connection');
 const bcrypt = require('bcrypt'); // Import bcrypt
 const { v4: uuidv4 } = require('uuid');
 
-const SALT_ROUNDS = 10; // Number of salt rounds for hashing
-
 const genarateUniqueId = () => {
-    uuidv4()
+    return uuidv4()
 }
 
 // Get all users
@@ -37,13 +35,14 @@ router.get('/users/:id', (req, res) => {
     });
 });
 
-
 // Create a new user
-router.post('/users', (req, res) => {
+router.post('/users', async (req, res) => {
     const { fullname, email, password, phoneno, dateofbirth, address } = req.body;
     const userid = genarateUniqueId();
+    console.log(fullname);
     const lastlogin = "0000-00-00";
     const loginstatus = false;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Check if user already exists
     const checkUserSql = 'SELECT * FROM userdata WHERE email = ? OR phoneno = ?';
@@ -55,23 +54,21 @@ router.post('/users', (req, res) => {
             res.status(400).json({ error: 'User already exists with this email or phone number' });
         } else {
             // Hash the password
-            bcrypt.hash(password, SALT_ROUNDS, (err, hashedPassword) => {
-                if (err) {
-                    console.error('Error hashing password:', err);
-                    res.status(500).json({ error: 'Internal Server Error' });
-                } else {
-                    // Insert new user
-                    const sql = 'INSERT INTO userdata (userid, fullname, email, password, phoneno, dateofbirth, address, lastlogin, loginstatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-                    db.query(sql, [userid, fullname, email, hashedPassword, phoneno, dateofbirth, address, lastlogin, loginstatus], (err, result) => {
-                        if (err) {
-                            console.error('Error creating user:', err);
-                            res.status(500).json({ error: 'Internal Server Error' });
-                        } else {
-                            res.status(201).json({ id: result.insertId, fullname, email });
-                        }
-                    });
-                }
-            });
+            if (err) {
+                console.error('Error hashing password:', err);
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                // Insert new user
+                const sql = 'INSERT INTO userdata (userid, fullname, email, password, phoneno, dateofbirth, address, lastlogin, loginstatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                db.query(sql, [userid, fullname, email, hashedPassword, phoneno, dateofbirth, address, lastlogin, loginstatus], (err, result) => {
+                    if (err) {
+                        console.error('Error creating user:', err);
+                        res.status(500).json({ error: 'Internal Server Error' });
+                    } else {
+                        res.status(201).json({ id: result.insertId, fullname, email });
+                    }
+                });
+            }
         }
     });
 });
