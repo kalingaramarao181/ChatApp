@@ -8,7 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 // Login route
 router.post('/login', (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body;   
     const checkUserSql = 'SELECT * FROM userdata WHERE email = ?';
 
     db.query(checkUserSql, [email], async (err, data) => {
@@ -29,7 +29,7 @@ router.post('/login', (req, res) => {
         }
 
         const loginTime = new Date();
-        const updateSql = 'UPDATE userdata SET lastlogin = ?, loginstatus = ? WHERE id = ?';
+        const updateSql = 'UPDATE userdata SET lastlogin = ?, loginstatus = ?, logincount = logincount + 1 WHERE id = ?';
 
         db.query(updateSql, [loginTime, true, user.id], (updateErr) => {
             if (updateErr) {

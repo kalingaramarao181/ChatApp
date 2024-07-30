@@ -36,7 +36,7 @@ router.get('/users/:id', (req, res) => {
 });
 
 // Create a new user
-router.post('/users', async (req, res) => {
+router.post('/signup-user', async (req, res) => {
     const { fullname, email, password, phoneno, dateofbirth, address } = req.body;
     const userid = genarateUniqueId();
     console.log(fullname);
