@@ -1,9 +1,122 @@
-import React from 'react'
+import React, { useState } from "react";
+import axios from "axios";
+import { baseUrl } from "../config";
+import "./index.css";
 
 const Signin = () => {
-  return (
-    <div>Signin</div>
-  )
-}
+  const [data, setData] = useState({
+    fullname: "",
+    email: "",
+    password: "",
+    phoneno: "",
+    dateofbirth: "",
+    address: "",
+  });
 
-export default Signin
+  const { fullname, email, password, phoneno, dateofbirth, address } = data;
+
+  const onCangeHandler = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
+  const submithandler = (e) => {
+    e.preventDefault();
+
+    axios
+      .post(`${baseUrl}signup-user`,data )
+      .then((res) => {
+        alert("Successfully added user");
+
+      })
+      .catch((err) => {
+        alert(err.message);
+        console.log(err);
+      });
+      setData({
+        fullname: "",
+        email: "",
+        password: "",
+        phoneno: "",
+        dateofbirth: "",
+        address: "",
+      });
+    
+  };
+
+  return (
+    <>
+      <div className="sign-main-container">
+        <div className="sign-form-full-container">
+          <h1 className="sign-heading">Signin Form</h1>
+          <form onSubmit={submithandler}>
+            <div className="input-full-container">
+              <label className="sign-paragraph">Full Name</label>
+              <input
+                type="text"
+                className="sign-input-tag"
+                name="fullname"
+                value={fullname}
+                onChange={onCangeHandler}
+                required
+              />
+              <label className="sign-paragraph">Email</label>
+              <input
+                type="email"
+                className="sign-input-tag"
+                name="email"
+                value={email}
+                onChange={onCangeHandler}
+                required
+              />
+              <label className="sign-paragraph">Password</label>
+              <input
+                type="password"
+                className="sign-input-tag"
+                name="password"
+                value={password}
+                onChange={onCangeHandler}
+                required
+              />
+              <label className="sign-paragraph">Phone Number</label>
+              <input
+                type="number"
+                className="sign-input-tag"
+                name="phoneno"
+                value={phoneno}
+                onChange={onCangeHandler}
+                required
+              />
+              <label className="sign-paragraph">Date Of Birth</label>
+              <input
+                type="date"
+                className="sign-input-tag"
+                name="dateofbirth"
+                value={dateofbirth}
+                onChange={onCangeHandler}
+                required
+              />
+              <label className="sign-paragraph">Address</label>
+              <textarea
+                type="text"
+                className="sign-input-tag"
+                name="address"
+                value={address}
+                onChange={onCangeHandler}
+                required
+              />
+              <input type="submit" className="sign-input-tag-submit" />
+            </div>
+          </form>
+        </div>
+        <div>
+          <img
+            src="images\slide-2.png"
+            alt="signin-img"
+            className="signin-image"
+          />
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Signin;

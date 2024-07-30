@@ -1,0 +1,64 @@
+.sign-main-container {
+    position: relative;
+    height: 88vh;
+    width: 100vw;
+    overflow: hidden; 
+     display: flex;
+     flex-direction: row;
+     justify-content: space-between;
+     padding: 70px;
+  }
+  .sign-heading{
+    font-size: 35px;
+    font-family: roboto;
+    text-align: center;
+  }
+  .sign-main-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+    filter: blur(10px); 
+    z-index: -1; 
+  }
+
+  .sign-form-full-container{
+   width: 500px;
+   height: 620px;
+   box-shadow: 0 2px 8px 0 rgba(14, 13, 13, 0.678), 0 4px 20px 0 rgba(0, 0, 0, 0.603);
+   padding: 30px;
+   background-color: white;
+   border-radius: 10px;
+
+  }
+  .input-full-container{
+    display: flex;
+    flex-direction: column;
+  }
+  .signin-image{
+ height: 500px;
+  }
+  .sign-input-tag{
+    padding: 5px;
+    margin-top: 5px;
+  }
+  .sign-paragraph{
+    font-size: 18px;
+    margin-top: 5px;
+  }
+  .sign-input-tag-submit{
+    padding: 5px;
+    margin-top: 5px;
+    background-color: rgb(30, 66, 119);
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .sign-input-tag-submit:hover{
+
+    background-color: rgb(209, 144, 4);
+
+  }
