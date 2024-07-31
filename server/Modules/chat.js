@@ -14,14 +14,15 @@ router.post('/send-message', (req, res) => {
     });
 });
 
-router.get('/messages', (req, res) => {
-    const { senderid, receiverid } = req.query;
+router.get('/messages/:senderid/:receiverid', (req, res) => {
+    const { senderid, receiverid } = req.params;
     const query = `
       SELECT * FROM messages 
       WHERE (senderid = ? AND receiverid = ?)
          OR (senderid = ? AND receiverid = ?)
       ORDER BY timestamp ASC
     `;
+    
     db.query(query, [senderid, receiverid, receiverid, senderid], (err, results) => {
         if (err) {
             console.error('Error fetching messages:', err);
