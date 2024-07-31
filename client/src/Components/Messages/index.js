@@ -30,7 +30,7 @@ const Chat = ({ userId, contactId }) => {
   }, [userId, contactId]);
 
   useEffect(() => {
-    axios.get('http://localhost:3000/messages', { params: { userId1: userId, userId2: contactId } })
+    axios.get('http://localhost:3000/messages', { params: { senderid: userId, receiverid: contactId } })
       .then(response => {
         setMessages(response.data);
       })
@@ -65,6 +65,7 @@ const Chat = ({ userId, contactId }) => {
         onChange={(e) => setInput(e.target.value)}
       />
       <button onClick={sendMessage}>Send</button>
+
     </div>
   );
 };
