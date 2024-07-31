@@ -28,11 +28,11 @@ const Navbar = () => {
             </Link>
             {token ? (
               <Link to="/Login" className="navbar-elements">
-                <button onClick={onClickLogout} > Logout</button>
+                <button onClick={onClickLogout} className="login-button" > Logout</button>
               </Link>
             ) : (
               <Link to="/Login" className="navbar-elements">
-                <button >Login</button>
+                <button className="login-button" >Login</button>
               </Link>
             )}
             <Link to="/Signin" className="navbar-elements">

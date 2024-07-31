@@ -1,29 +1,39 @@
 .sign-main-container {
-    position: relative;
-    height: 88vh;
-    width: 100vw;
-    overflow: hidden; 
-     display: flex;
-     flex-direction: row;
-     justify-content: space-between;
-     padding: 70px;
-  }
+  position: relative;
+  height: 88vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 50px;
+}
+
+.sign-main-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("/public/images/5fz9SMYxWbv44jFVcD4vmd-1200-80.jpg");
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px); /* Adjust the blur value as needed */
+  z-index: -1; /* Ensures the background stays behind the content */
+}
+
+/* Ensure that the content of the container is positioned above the blurred background */
+.sign-main-container > * {
+  position: relative;
+  z-index: 1;
+}
   .sign-heading{
     font-size: 35px;
     font-family: roboto;
     text-align: center;
   }
-  .sign-main-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-size: cover;
-    filter: blur(10px); 
-    z-index: -1; 
-  }
+
 
   .sign-form-full-container{
    width: 500px;
@@ -40,6 +50,7 @@
   }
   .signin-image{
  height: 500px;
+ margin-top: 60px;
   }
   .sign-input-tag{
     padding: 5px;
@@ -51,11 +62,12 @@
   }
   .sign-input-tag-submit{
     padding: 5px;
-    margin-top: 5px;
+    margin-top: 10px;
     background-color: rgb(30, 66, 119);
     color: white;
     font-size: 20px;
     font-weight: bold;
+
   }
   .sign-input-tag-submit:hover{
 

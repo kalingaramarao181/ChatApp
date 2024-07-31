@@ -25,3 +25,9 @@
     flex-direction: row;
     padding-right: 4vw;
 }
+.login-button{
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-weight: bold;
+}
