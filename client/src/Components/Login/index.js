@@ -25,7 +25,7 @@ const Login = (props) => {
       .then((res) => {
         console.log(res.data.message);
         Cookies.set("jwtToken", res.data.token, { expires: 30 });
-        localStorage.setItem('userdata',JSON.stringify(res.data.user))
+        localStorage.setItem('userdata',JSON.stringify(res.data.user)) 
         history.replace('/chat')
         window.location.reload()
       })
