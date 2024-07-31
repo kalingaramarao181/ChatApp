@@ -1,6 +1,15 @@
 const app = require('./Modules/application');
 const userRoutes = require('./Modules/users');
-const loginRoutes = require('./Modules/login');  // Import the login routes
+const loginRoutes = require('./Modules/login'); 
+const chatRoutes = require('./Modules/chat'); 
+
+
+const bodyParser = require('body-parser');
+const cors = require("cors");
+
+app.use(bodyParser.json());
+app.use(cors());// Import the login routes
+ // Import the login routes
 
 app.use('/api', userRoutes);
 app.use('/api', loginRoutes);  // Use the login routes

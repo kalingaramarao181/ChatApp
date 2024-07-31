@@ -13,7 +13,6 @@ router.post('/send-message', (req, res) => {
         res.status(200).send('Message sent');
     });
 });
-
 router.get('/messages', (req, res) => {
     const { senderid, receiverid } = req.query;
     const query = `
