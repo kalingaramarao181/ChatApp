@@ -18,7 +18,6 @@ const Login = (props) => {
   const onChangeHandler = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
-
   const submitHandler = (e) => {
     e.preventDefault();
     axios
@@ -52,6 +51,7 @@ const Login = (props) => {
                 name="email"
                 value={email}
                 onChange={onChangeHandler}
+                placeholder="Enter Your Email"
                 required
               />
               <label className="login-paragraph">Password</label>
@@ -61,6 +61,8 @@ const Login = (props) => {
                 name="password"
                 value={password}
                 onChange={onChangeHandler}
+                placeholder="Enter Your Password"
+
                 required
               />
               <input type="submit" className="login-input-tag-submit" />
@@ -69,9 +71,9 @@ const Login = (props) => {
         </div>
         <div>
           <img
-            src="images/slide-2.png"
+            src="images\Cyber-Security.png"
             alt="signin-img"
-            className="signin-image"
+            className="login-image"
           />
         </div>
       </div>

@@ -11,8 +11,13 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
+<<<<<<< HEAD
     "cors": "^2.8.5",
     "express": "^4.19.2",
+=======
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+>>>>>>> 207a885a9b7f2c819478e55d24d4fba300f03959
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
     "uuid": "^10.0.0",

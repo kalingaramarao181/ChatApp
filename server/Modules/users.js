@@ -35,6 +35,29 @@ router.get('/users/:id', (req, res) => {
     });
 });
 
+//Get chatted users
+router.get('/chatted-users/:senderid', (req, res) => {
+    const { senderid } = req.params;
+    const sql = `
+        SELECT DISTINCT userdata.id, userdata.fullname, 
+        userdata.email, userdata.phoneno, userdata.lastlogin 
+        FROM userdata 
+        JOIN messages
+          ON (userdata.id = messages.senderid AND messages.receiverid = ?)
+          OR (userdata.id = messages.receiverid AND messages.senderid = ?)
+        WHERE userdata.id != ?
+    `;
+
+    db.query(sql, [senderid, senderid, senderid], (err, data) => {
+        if (err) {
+            console.error('Error fetching user:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json(data);
+        }
+    });
+});
+
 // Create a new user
 router.post('/signup-user', async (req, res) => {
     const { fullname, email, password, phoneno, dateofbirth, address } = req.body;

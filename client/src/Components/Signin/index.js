@@ -56,6 +56,7 @@ const Signin = () => {
                 name="fullname"
                 value={fullname}
                 onChange={onCangeHandler}
+                placeholder="Enter Your FullName"
                 required
               />
               <label className="sign-paragraph">Email</label>
@@ -65,6 +66,8 @@ const Signin = () => {
                 name="email"
                 value={email}
                 onChange={onCangeHandler}
+                placeholder="Enter Your Email"
+
                 required
               />
               <label className="sign-paragraph">Password</label>
@@ -74,6 +77,8 @@ const Signin = () => {
                 name="password"
                 value={password}
                 onChange={onCangeHandler}
+                placeholder="Enter Your Password"
+
                 required
               />
               <label className="sign-paragraph">Phone Number</label>
@@ -83,6 +88,8 @@ const Signin = () => {
                 name="phoneno"
                 value={phoneno}
                 onChange={onCangeHandler}
+                placeholder="Enter Your Phone Number"
+
                 required
               />
               <label className="sign-paragraph">Date Of Birth</label>
@@ -92,6 +99,7 @@ const Signin = () => {
                 name="dateofbirth"
                 value={dateofbirth}
                 onChange={onCangeHandler}
+
                 required
               />
               <label className="sign-paragraph">Address</label>
@@ -101,6 +109,8 @@ const Signin = () => {
                 name="address"
                 value={address}
                 onChange={onCangeHandler}
+                placeholder="Enter Your Address"
+
                 required
               />
               <input type="submit" className="sign-input-tag-submit" />
@@ -109,7 +119,7 @@ const Signin = () => {
         </div>
         <div>
           <img
-            src="images\slide-2.png"
+            src="images\8-2-web-security-png-hd.png"
             alt="signin-img"
             className="signin-image"
           />

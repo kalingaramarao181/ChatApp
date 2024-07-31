@@ -8,8 +8,8 @@ const Dashboard = () => {
 
     const senderData = JSON.parse( localStorage.getItem("senderData") )
 
-    const [message,setMessage]= useState({
-        senderid:senderData.id,
+    const [message,setMessage]= useState({          
+        senderid:senderData.id,       
         receiverid:0,
         message:""
     })
