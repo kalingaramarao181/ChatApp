@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { baseUrl } from "../config";
 import Cookies from "js-cookie";
+import './index.css'
 
 const Login = (props) => {
   
@@ -25,7 +26,7 @@ const Login = (props) => {
       .then((res) => {
         console.log(res.data.message);
         Cookies.set("jwtToken", res.data.token, { expires: 30 });
-        localStorage.setItem('userdata',JSON.stringify(res.data.user)) 
+        localStorage.setItem('senderData',JSON.stringify(res.data.user)) 
         history.replace('/chat')
         window.location.reload()
       })
@@ -39,30 +40,30 @@ const Login = (props) => {
 
   return (
     <>
-      <div className="sign-main-container">
-        <div className="sign-form-full-container">
-          <h1 className="sign-heading">Login Form</h1>
+      <div className="login-main-container">
+        <div className="login-form-full-container">
+          <h1 className="login-heading">Login Form</h1>
           <form onSubmit={submitHandler}>
             <div className="input-full-container">
-              <label className="sign-paragraph">Email</label>
+              <label className="login-paragraph">Email</label>
               <input
                 type="email"
-                className="sign-input-tag"
+                className="login-input-tag"
                 name="email"
                 value={email}
                 onChange={onChangeHandler}
                 required
               />
-              <label className="sign-paragraph">Password</label>
+              <label className="login-paragraph">Password</label>
               <input
                 type="password"
-                className="sign-input-tag"
+                className="login-input-tag"
                 name="password"
                 value={password}
                 onChange={onChangeHandler}
                 required
               />
-              <input type="submit" className="sign-input-tag-submit" />
+              <input type="submit" className="login-input-tag-submit" />
             </div>
           </form>
         </div>

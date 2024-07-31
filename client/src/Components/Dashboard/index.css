@@ -59,6 +59,10 @@
  border-radius: 5px;
  border: none;
  }
+ .dashboard-input-text:focus{
+    border: none;
+    outline: none;
+ }
  .dashboard-input-elements-container{
     background-color: white;
     display: flex;
@@ -89,3 +93,6 @@
     color: rgb(248, 147, 15);
     
  }
+.dashboard-button{
+    border: none;
+}

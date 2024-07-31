@@ -8,6 +8,7 @@ const Navbar = () => {
 
   const onClickLogout =()=>{
     Cookies.remove('jwtToken')
+    localStorage.removeItem("senderData")
     window.location.reload()
   }
 
