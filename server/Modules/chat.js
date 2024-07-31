@@ -13,6 +13,7 @@ router.post('/send-message', (req, res) => {
         res.status(200).send('Message sent');
     });
 });
+
 router.get('/messages', (req, res) => {
     const { senderid, receiverid } = req.query;
     const query = `
@@ -21,6 +22,7 @@ router.get('/messages', (req, res) => {
          OR (senderid = ? AND receiverid = ?)
       ORDER BY timestamp ASC
     `;
+    
     db.query(query, [senderid, receiverid, receiverid, senderid], (err, results) => {
         if (err) {
             console.error('Error fetching messages:', err);
