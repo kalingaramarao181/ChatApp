@@ -39,13 +39,22 @@ router.get('/users/:id', (req, res) => {
 router.get('/chatted-users/:senderid', (req, res) => {
     const { senderid } = req.params;
     const sql = `
-        SELECT DISTINCT userdata.id, userdata.fullname, 
-        userdata.email, userdata.phoneno, userdata.lastlogin 
-        FROM userdata 
-        JOIN messages
-          ON (userdata.id = messages.senderid AND messages.receiverid = ?)
-          OR (userdata.id = messages.receiverid AND messages.senderid = ?)
-        WHERE userdata.id != ?
+        SELECT DISTINCT 
+            userdata.id, 
+            userdata.fullname, 
+            userdata.email, 
+            userdata.phoneno, 
+            userdata.lastlogin 
+        FROM 
+            userdata 
+        JOIN 
+            messages 
+            ON (userdata.id = messages.senderid AND messages.receiverid = ?) 
+            OR (userdata.id = messages.receiverid AND messages.senderid = ?)
+        WHERE 
+            userdata.id != ? 
+        ORDER BY 
+            messages.timestamp;
     `;
 
     db.query(sql, [senderid, senderid, senderid], (err, data) => {

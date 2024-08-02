@@ -16,6 +16,8 @@
 .dashboard-profil-container {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     padding: 10px;
     border: 2px solid;
 }
@@ -48,7 +50,7 @@
     padding-top: 10px;
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     background-color: transparent;  
     border: none;
@@ -187,4 +189,28 @@
     border-radius: 10px;
     position: relative;
     bottom: -200;
+}
+.add-people-button{
+    border: 3px solid white;
+    background-color: transparent;
+    font-size: 40px;
+    height: 60px;
+    width:60px;
+    padding: 5px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50px;
+}
+.search-input{
+    width: 500px;
+    height: 40px;
+    border-radius: 30px;
+    padding: 10px;
+    border: none;
+}
+.search-input:focus{
+    outline: none;
 }

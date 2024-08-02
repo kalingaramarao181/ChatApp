@@ -7,6 +7,7 @@ import './index.css';  // Assuming you have your styles here
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { IoIosShareAlt } from "react-icons/io";
+import { IoPersonAddOutline } from "react-icons/io5";
 
 const Dashboard = () => {
   const senderData = JSON.parse(localStorage.getItem('senderData')) || { id: 1, fullname: 'John Doe' };
@@ -17,6 +18,7 @@ const Dashboard = () => {
     message: ''
   });
   const [chatUsersData, setChatUsersData] = useState([]);
+  const [usersData, setUsersData] = useState([]);
   const [chat, setChat] = useState([]);
   const [chattingUser, setChattingUser] = useState({});
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -26,17 +28,24 @@ const Dashboard = () => {
   const [selectedIds, setSelectedIds] = useState([])
   const [isSelectMessageEdit, setIsSelectMessageEdit] = useState(false)
   const [editMessage, setEditMessage] = useState({ message: "", messageId: 0 });
-
-
-
-
-
+  const [usersView, setUsersView] = useState(false)
+  const [searchValue, setSearchValue] = useState("")
 
   useEffect(() => {
     axios.get(`${baseUrl}chatted-users/${senderData.id}`)
       .then((res) => {
         setChatUsersData(res.data);
         setMessage(prevMessage => ({ ...prevMessage, receiverid: res.data[0]?.id || 0 }));
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, [senderData.id]);
+
+  useEffect(() => {
+    axios.get(`${baseUrl}users`)
+      .then((res) => {
+        setUsersData(res.data);
       })
       .catch(err => {
         console.log(err);
@@ -110,21 +119,19 @@ const Dashboard = () => {
     console.log(e.target.checked, e.target.id);
 
     if (e.target.checked && e.target.id) {
-      // Add the selected id to the array
       setSelectedIds(prevSelectedIds => [...prevSelectedIds, e.target.id]);
     } else if (!e.target.checked && e.target.id) {
-      // Remove the unselected id from the array
       setSelectedIds(prevSelectedIds => prevSelectedIds.filter(id => id !== e.target.id));
     }
   }
 
   const onClickDeleteSelected = () => {
-    const selectedIdsString = selectedIds.join(",");  // Convert array to comma-separated string
+    const selectedIdsString = selectedIds.join(",");
 
     axios.delete(`${baseUrl}selected-messages/${selectedIdsString}`)
       .then((res) => {
-        console.log(res.data);  // Log the successful response data
-        window.location.reload();  // Optionally reload the page
+        console.log(res.data);
+        window.location.reload();
       })
       .catch(err => {
         console.error('Error deleting messages:', err.response ? err.response.data : err.message);  // Log error
@@ -149,13 +156,43 @@ const Dashboard = () => {
     setChattingUser(user);
   };
 
+  const handleClickSelectUser = (id, user) => {
+    const isPresent = chatUsersData.some(obj => obj.id === user.id);
+    setChatUsersData(!isPresent ? [...chatUsersData, user] : [...chatUsersData])
+    setMessage(prevMessage => ({ ...prevMessage, receiverid: id }));
+    setChattingUser(user);
+    setUsersView(false)
+  };
+
+
+
+  const searchUsersData = usersData.filter(eachUser => eachUser.fullname.trim().toLocaleLowerCase().includes(searchValue.toLocaleLowerCase()) && eachUser.id !== senderData.id)
+
   return (
     <div className='dashboard-total-container'>
-      <div className='dashboard-main-container'>
+      {usersView ? <div className='dashboard-main-container'>
         <div className='dashboard-profil-container'>
-          <h1 className='dashboard-profil-heading'>{senderData.fullname}</h1>
+          <input onChange={(e) => setSearchValue(e.target.value)} type='search' className='search-input' placeholder='Search Users' />
         </div>
 
+        {searchUsersData.map(eachUser => (
+          <button
+            key={eachUser.id}
+            onClick={() => handleClickSelectUser(eachUser.id, eachUser)}
+            className={eachUser.id === message.receiverid ? 'dashboard-profil-container-3' : 'dashboard-profil-container-2'}
+          >
+            <p className='dashboard-profil-icon'>
+              {eachUser.fullname.split(" ").length >= 1 ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0] : eachUser.fullname[0]}
+            </p>
+            <h1 className='dashboard-profil-heading'>{eachUser.fullname}</h1>
+          </button>
+        ))}
+      </div> : <div className='dashboard-main-container'>
+        <div className='dashboard-profil-container'>
+          <h1 className='dashboard-profil-heading'>{senderData.fullname}</h1>
+          <button onClick={() => setUsersView(true)} className='add-people-button'><IoPersonAddOutline /></button>
+        </div>
+        
         {chatUsersData.map(eachUser => (
           <button
             key={eachUser.id}
@@ -163,12 +200,12 @@ const Dashboard = () => {
             className={eachUser.id === message.receiverid ? 'dashboard-profil-container-3' : 'dashboard-profil-container-2'}
           >
             <p className='dashboard-profil-icon'>
-              {eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0]}
+              {eachUser.fullname.split(" ").length >= 1 ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0] : eachUser.fullname[0]}
             </p>
             <h1 className='dashboard-profil-heading'>{eachUser.fullname}</h1>
           </button>
         ))}
-      </div>
+      </div>}
       <div className='dashboard-chat-container'>
         <div>
           <h1>{chattingUser.fullname}</h1>
