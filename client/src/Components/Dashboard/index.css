@@ -143,6 +143,7 @@
 
 .dashboard-button {
     border: none;
+    background-color: transparent;
 }
 .emoji-input{
     position: relative;
@@ -175,10 +176,36 @@
     background-color: transparent;
     border: none;
     color: white;
-    font-size: 20px;
+    font-size: 15px;
+    width: 30px;
 }
-.message{
+.message-feature-empty-button{
+    width: 30px;
+    font-size: 15px;
+}
+.message-receiver, .message-sender{
     font-size: 20px;
+    background-color: rgb(30, 66, 119);
+    min-width: 50px;
+    max-width: 250px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    min-height: 20px;
+}
+.message-receiver{
+    background-color: rgb(171, 184, 195);
+    color: rgb(31, 30, 30);
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 0px;
+
+
 }
 .edit-bar-container{
     display: flex;

@@ -214,9 +214,9 @@ const Dashboard = () => {
           <div className='dashboard-chat-box-container'>
             {chat.map((eachMessage, index) => (
               <>
-                <p className='message' onMouseEnter={() => setViewEdit(eachMessage.id)} onMouseLeave={() => setViewEdit(false)} key={index} style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
+                <p className={eachMessage.senderid === senderData.id ? 'message-sender' : 'message-receiver'} onMouseEnter={() => setViewEdit(eachMessage.id)} onMouseLeave={() => setViewEdit(false)} key={index} style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
                   {selectInput && <input id={eachMessage.id} onChange={onSelectMessage} type='checkbox' />}
-                  {eachMessage.message} {viewEdit === eachMessage.id && <button onClick={() => setEditBarView(eachMessage.id)} className='message-feature-button'><FaRegEdit /></button>}
+                  {eachMessage.message} {viewEdit === eachMessage.id ? <button onClick={() => setEditBarView(eachMessage.id)} className='message-feature-button'><FaRegEdit /></button> : <p className='message-feature-empty-button'>{` `}</p>}
                 </p>
                 {editBarView === eachMessage.id &&
                   <div className='edit-bar-container' style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
