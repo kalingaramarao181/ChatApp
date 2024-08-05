@@ -1,53 +1,53 @@
 .dashboard-total-container {
     display: flex;
     flex-direction: row;
-    margin: 15px;
-
+    margin: 0.5vw;
+    height: 87vh;
 }
 
-.dashboard-main-container {
-    width: 24vw;
+.dashboard-sidebar-main-container {
+    width: 22vw;
     box-shadow: 0 2px 8px 0 rgba(14, 13, 13, 0.678), 0 4px 20px 0 rgba(0, 0, 0, 0.603);
-    padding: 10px;
-    background-color: rgb(30, 66, 119);
-    color: white;
+    padding:0.5vw;
+    background-image: url("https://e0.pxfuel.com/wallpapers/249/8/desktop-wallpaper-chat-whatsapp-chat-thumbnail.jpg");
+    color: rgb(255, 244, 244);
+    height: 84vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.dashboard-profil-container {
+.sidebar-profile-container {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
     border: 2px solid;
+    height: 9vh;
+    width: 21vw;
 }
 
-.dashboard-profil-heading {
+.sidebar-profile-heading {
     font-family: roboto;
     padding-left: 10px;
-    font-size: 34px;
+    font-size: 2vw;
 }
 
-.dashboard-profil-icon-1{
-    font-size: 40px;
-}
-.dashboard-profil-icon{
-    font-size: 20px;
+.sidebar-profil-icon{
+    font-size: 1.4vw;
+    font-weight: 100;
     border: 1px solid white;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     border-radius: 50px;
+
 }
 
-.dashboard-profil-container-2,  .dashboard-profil-container-3{
-    display: flex;
-    flex-direction: row;
-    padding: 5px;
-    padding-top: 10px;
+.sidebar-profil-container-inactive,  .sidebar-profil-container-active{
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -56,48 +56,75 @@
     border: none;
     color: white;
     cursor: pointer;
-    width: 370px;
-    margin-top: 5px;
+    width: 21vw;
+    height: 4vw;
+    margin-top: 1vh;
 }
-.dashboard-profil-container-3{
-    background-color: rgb(168, 170, 172);
+.sidebar-profil-container-active{
+    background-image: url("https://e0.pxfuel.com/wallpapers/249/8/desktop-wallpaper-chat-whatsapp-chat-thumbnail.jpg");
+    
 }
 
 .dashboard-chat-container {
-    background-color: rgb(124, 154, 173);
-    height: 45vw;
-    width: 90vw;
-    display: flex;
-    flex-direction: row;
-    align-items: end;
-    margin-left: 6px;
-    padding: 10px;
+    position: relative; /* Ensure the container is positioned relative for the pseudo-element */
+    width: 76vw;
+    height: 84vh;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    overflow-y: auto;
+    margin-left: 6px;
+    padding: 1vw;
 }
 
+.dashboard-chat-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("https://cdn.wallpapersafari.com/27/32/jt4AoG.jpg");
+    background-size: cover;
+    filter: blur(3px); /* Adjust the blur intensity as needed */
+    z-index: 0; /* Ensure the blurred image is behind the content */
+    pointer-events: none; /* Ensure the overlay doesn't interfere with interactions */
+}
+
+.dashboard-chat-container > * {
+    position: relative; /* Ensure the child elements are above the pseudo-element */
+    z-index: 1;
+}
+
+
+
+
 .dashboard-chat-main-container {
-    width: 1170px;
-    height: 80px;
-    padding: 10px;
+    width: 73vw;
+    height: 9vh;
+    padding: 0.5vw;
     border-radius: 5px;
     border: none;
-    background-color: rgb(30, 66, 119);
+    background-image: url("https://e0.pxfuel.com/wallpapers/249/8/desktop-wallpaper-chat-whatsapp-chat-thumbnail.jpg");
+
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     position: absolute;
-    top: 750px;
+    top: 75vh;
+    
+    
 }
 
 .dashboard-input-text {
-    width: 1000px;
-    padding: 10px;
+    width: 61vw;
+    height: 7vh;
+    padding-left: 0.5vw;
     border-radius: 5px;
     border: none;
+
 }
 
 .dashboard-input-text:focus {
@@ -108,37 +135,36 @@
 .dashboard-input-elements-container {
     background-color: white;
     display: flex;
-    width: 1100px;
-    height: 60px;
-    padding-right: 10px;
+    flex-direction: row;
+    justify-content: space-between ;
+    align-items: center;
+    width: 70vw;
+    height: 7vh;
+  padding-right: 0.7vw;
     border-radius: 10px;
     align-items: center;
+
 
 }
 
 .dashboard-text-emoji-button {
-    font-size: 40px;
+    font-size: 2.5vw;
     background-color: transparent;
     border: none;
     
 }
 
 .dashboard-text-emoji-container-send {
-    font-size: 30px;
-    margin-left: 10px;
-    padding-left: 10px;
-    width: 40px;
-    color: rgb(23, 115, 202);
+    font-size: 3vw;
+    margin-left: 0.5vw;
+    padding-left: 0.5vw;
+    width: 3vw;
+    color: rgb(14, 104, 84);
     cursor: pointer;
 }
 
 .dashboard-text-emoji-container-send:hover {
-    font-size: 40px;
-    margin-left: 10px;
-    padding-left: 10px;
-    width: 40px;
     color: rgb(248, 147, 15);
-
 }
 
 .dashboard-button {
@@ -147,11 +173,9 @@
 }
 .emoji-input{
     position: relative;
-    left: 800px;
-    top: 170px;
 }
+
 .chat-container{
-    height: 500px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -159,13 +183,26 @@
 
 
 .dashboard-chat-box-container{
-    height: 600px;
+    height: 68vh;
+    width: 73vw;
     display: flex;
     flex-direction: column;
-    width: 70vw;
     position: absolute;
-    overflow: auto;
-    padding: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1vw;
+}
+.dashboard-chat-box-container::-webkit-scrollbar-thumb {
+    background: rgb(153, 153, 250);
+    border-radius: 10px;
+}
+
+.dashboard-chat-box-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+  
+.dashboard-chat-box-container::-webkit-scrollbar {
+    width: 5px;
 }
 .edit-bar-button{
     background-color: transparent;
@@ -176,32 +213,52 @@
     background-color: transparent;
     border: none;
     color: white;
-    font-size: 15px;
-    width: 30px;
+    font-size: 1vw;
+    
+    align-self: flex-end;
 }
 .message-feature-empty-button{
     width: 30px;
     font-size: 15px;
 }
 .message-receiver, .message-sender{
-    font-size: 20px;
-    background-color: rgb(30, 66, 119);
-    min-width: 50px;
-    max-width: 250px;
+    font-size: 1.5vw;
+    background-image: url("https://e0.pxfuel.com/wallpapers/249/8/desktop-wallpaper-chat-whatsapp-chat-thumbnail.jpg");
+
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     color: white;
-    padding: 10px;
+    padding: 0.3vw;
+    padding-left: 1vw;
+    padding-right: 1vw;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     border-bottom-left-radius: 10px;
-    min-height: 20px;
+    margin:0.5vw ;
+  
+}
+.message-time-container{
+    display:flex ;
+    flex-direction: column;
+    justify-content: space-between;
+
+}
+.message-span{
+    max-width: 20vw;
+    overflow-wrap:break-word ;
+    margin-right: 0.8vw;
+}
+.time-span{
+ align-self: flex-end;
+ font-size: 0.8vw;
 }
 .message-receiver{
-    background-color: rgb(171, 184, 195);
-    color: rgb(31, 30, 30);
+    background-color: rgb(255, 255, 255);
+    border: 0.5px solid rgb(189, 180, 180);
+    background-image: none;
+    color: rgb(27, 26, 26);
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 0px;
 
@@ -209,20 +266,18 @@
 }
 .edit-bar-container{
     display: flex;
-    flex-direction: column;
-    width: 100px;
     background-color: white;
-    height: 180px;
     border-radius: 10px;
-    position: relative;
-    bottom: -200;
+    padding: 0.4vw;
+    border: 1px solid black;
+    flex-direction: row;
 }
 .add-people-button{
-    border: 3px solid white;
+    border: 2px solid white;
     background-color: transparent;
-    font-size: 40px;
-    height: 60px;
-    width:60px;
+    font-size: 2vw;
+    height: 45px;
+    width:45px;
     padding: 5px;
     color: white;
     display: flex;
@@ -240,4 +295,36 @@
 }
 .search-input:focus{
     outline: none;
+}
+.message-input-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.dashboard-input-elements-container-select-stage{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 70vw;
+    height: 7vh;
+    background-color: white;
+    padding-left: 0.7vw;
+    align-items: center;
+    border-radius: 10px;
+}
+.share-delete-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.selected-items{
+    font-size: 1.2vw;
+    font-weight: 600;
+    padding-top: 1.5vh;
+}
+.name-search{
+    font-family: roboto;
 }

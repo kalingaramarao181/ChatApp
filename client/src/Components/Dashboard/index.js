@@ -15,7 +15,8 @@ const Dashboard = () => {
   const [message, setMessage] = useState({
     senderid: senderData.id,
     receiverid: 0,
-    message: ''
+    message: '',
+    timestamp:new Date()
   });
   const [chatUsersData, setChatUsersData] = useState([]);
   const [usersData, setUsersData] = useState([]);
@@ -181,8 +182,8 @@ const Dashboard = () => {
 
   return (
     <div className='dashboard-total-container'>
-      {usersView ? <div className='dashboard-main-container'>
-        <div className='dashboard-profil-container'>
+      {usersView ? <div className='dashboard-sidebar-main-container'>
+        <div className='sidebar-profile-container'>
           <input onChange={(e) => setSearchValue(e.target.value)} type='search' className='search-input' placeholder='Search Users' />
         </div>
 
@@ -190,17 +191,17 @@ const Dashboard = () => {
           <button
             key={eachUser.id}
             onClick={() => handleClickSelectUser(eachUser.id, eachUser)}
-            className={eachUser.id === message.receiverid ? 'dashboard-profil-container-3' : 'dashboard-profil-container-2'}
+            className={eachUser.id === message.receiverid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
           >
-            <p className='dashboard-profil-icon'>
+            <p className='sidebar-profil-icon'>
               {eachUser.fullname.split(" ").length >= 1 ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0] : eachUser.fullname[0]}
             </p>
-            <h1 className='dashboard-profil-heading'>{eachUser.fullname}</h1>
+            <h1 className='sidebar-profile-heading'>{eachUser.fullname}</h1>
           </button>
         ))}
-      </div> : <div className='dashboard-main-container'>
-        <div className='dashboard-profil-container'>
-          <h1 className='dashboard-profil-heading'>{senderData.fullname}</h1>
+      </div> : <div className='dashboard-sidebar-main-container'>
+        <div className='sidebar-profile-container'>
+          <h1 className='sidebar-profile-heading'>{senderData.fullname}</h1>
           <button onClick={() => setUsersView(true)} className='add-people-button'><IoPersonAddOutline /></button>
         </div>
         
@@ -208,18 +209,18 @@ const Dashboard = () => {
           <button
             key={eachUser.id}
             onClick={() => handleClickSendUser(eachUser.id, eachUser)}
-            className={eachUser.id === message.receiverid ? 'dashboard-profil-container-3' : 'dashboard-profil-container-2'}
+            className={eachUser.id === message.receiverid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
           >
-            <p className='dashboard-profil-icon'>
-              {eachUser.fullname.split(" ").length >= 1 ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0] : eachUser.fullname[0]}
+            <p className='sidebar-profil-icon'>
+             AB {/* {eachUser.fullname.split(" ").length >= 1 ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0] : eachUser.fullname[0]} */}
             </p>
-            <h1 className='dashboard-profil-heading'>{eachUser.fullname}</h1>
+            <h1 className='sidebar-profile-heading'>{eachUser.fullname}</h1>
           </button>
         ))}
       </div>}
       <div className='dashboard-chat-container'>
         <div>
-          <h1>{chattingUser.fullname}</h1>
+          <h1 className='name-search'>{chattingUser.fullname}</h1>
         </div>
         <div className='chat-container'>
           <div className='dashboard-chat-box-container'>
@@ -229,11 +230,16 @@ const Dashboard = () => {
               
               const time = formatAMPM(timeStamp)
               return<>
+              <div  className='message-input-container' style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
+              {selectInput && <input className='select-input' id={eachMessage.id} onChange={onSelectMessage} type='checkbox' />}              
                 <p className={eachMessage.senderid === senderData.id ? 'message-sender' : 'message-receiver'} onMouseEnter={() => setViewEdit(eachMessage.id)} onMouseLeave={() => setViewEdit(false)} key={index} style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
-                  {selectInput && <input id={eachMessage.id} onChange={onSelectMessage} type='checkbox' />}
-                  {eachMessage.message} {viewEdit === eachMessage.id ? <button onClick={() => setEditBarView(eachMessage.id)} className='message-feature-button'><FaRegEdit /></button> : <p className='message-feature-empty-button'>{` `}</p>}
-                  <span>{time}</span>
+                  <span className='message-span'>{eachMessage.message}</span> 
+                 <div className='message-time-container'>
+                  {viewEdit === eachMessage.id ? <button onClick={() => setEditBarView(eachMessage.id)} className='message-feature-button'><FaRegEdit /></button> : <p className='message-feature-empty-button'>{` `}</p>}
+                  <span  className='time-span'>{time}</span>
+                  </div>
                 </p>
+                </div>
                 {editBarView === eachMessage.id &&
                   <div className='edit-bar-container' style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
                     <button onClick={() => handleMessageEdit(eachMessage.id, eachMessage.message)} className='edit-bar-button'>Edit</button>
@@ -248,14 +254,17 @@ const Dashboard = () => {
           {showEmojiPicker && <EmojiPicker className='emoji-input' onEmojiClick={onEmojiClick} />}
         </div>
         <div className='dashboard-chat-main-container'>
-          {selectInput ? <div className='dashboard-input-elements-container'>
-            <p>Selected {selectedIds.length}</p>
+          {selectInput ? <div className='dashboard-input-elements-container-select-stage'>
+            <p className='selected-items'>Selected {selectedIds.length}</p>
+<div className='share-delete-container'>
             <button className='dashboard-button' onClick={onClickDeleteSelected}>
               <MdDelete className='dashboard-text-emoji-container-send' />
             </button>
+
             <button className='dashboard-button'>
               <IoIosShareAlt className='dashboard-text-emoji-container-send' />
             </button>
+         </div>   
           </div> : isSelectMessageEdit ? <div className='dashboard-input-elements-container'>
             <input
               type='text'

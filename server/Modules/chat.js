@@ -3,8 +3,8 @@ const router = express.Router();
 const db = require('./connection');
 
 
-router.get('/messages', (req, res) => {
-    const { senderid, receiverid } = req.query;
+router.get('/messages/:senderid/:receiverid', (req, res) => {
+    const { senderid, receiverid } = req.params;
     const query = `
       SELECT * FROM messages 
       WHERE (senderid = ? AND receiverid = ?)
