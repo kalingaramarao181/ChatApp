@@ -164,6 +164,17 @@ const Dashboard = () => {
     setUsersView(false)
   };
 
+  function formatAMPM(date) {
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+    }
+
 
 
   const searchUsersData = usersData.filter(eachUser => eachUser.fullname.trim().toLocaleLowerCase().includes(searchValue.toLocaleLowerCase()) && eachUser.id !== senderData.id)
@@ -212,11 +223,16 @@ const Dashboard = () => {
         </div>
         <div className='chat-container'>
           <div className='dashboard-chat-box-container'>
-            {chat.map((eachMessage, index) => (
-              <>
-                <p className='message' onMouseEnter={() => setViewEdit(eachMessage.id)} onMouseLeave={() => setViewEdit(false)} key={index} style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
+            {chat.map((eachMessage, index) => {
+              const timeStamp = new Date(eachMessage.timestamp)
+              console.log(timeStamp);
+              
+              const time = formatAMPM(timeStamp)
+              return<>
+                <p className={eachMessage.senderid === senderData.id ? 'message-sender' : 'message-receiver'} onMouseEnter={() => setViewEdit(eachMessage.id)} onMouseLeave={() => setViewEdit(false)} key={index} style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
                   {selectInput && <input id={eachMessage.id} onChange={onSelectMessage} type='checkbox' />}
-                  {eachMessage.message} {viewEdit === eachMessage.id && <button onClick={() => setEditBarView(eachMessage.id)} className='message-feature-button'><FaRegEdit /></button>}
+                  {eachMessage.message} {viewEdit === eachMessage.id ? <button onClick={() => setEditBarView(eachMessage.id)} className='message-feature-button'><FaRegEdit /></button> : <p className='message-feature-empty-button'>{` `}</p>}
+                  <span>{time}</span>
                 </p>
                 {editBarView === eachMessage.id &&
                   <div className='edit-bar-container' style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
@@ -226,7 +242,8 @@ const Dashboard = () => {
                   </div>
                 }
               </>
-            ))}
+            }
+            )}
           </div>
           {showEmojiPicker && <EmojiPicker className='emoji-input' onEmojiClick={onEmojiClick} />}
         </div>
