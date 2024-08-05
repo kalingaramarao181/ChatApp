@@ -8,7 +8,7 @@ const chatRoutes = require("./Modules/chat")
 app.use(bodyParser.json());
 app.use(cors());
 app.use('/api', userRoutes);
-app.use('/api', loginRoutes);  // Use the login routes
+app.use('/api', loginRoutes);        // Use the login routes
 app.use('/api', chatRoutes);  // Use the login routes
 
 const PORT = process.env.PORT || 4000;

@@ -19,11 +19,11 @@ const Navbar = () => {
         <ul className="Navbar-container">
           <Link to="/" className="navbar-elements">
             <li>
-              <img src="images\image.png" alt="logo" className="logo-image" />{" "}
+              <img src="images\image.png" alt="logo" className="logo-image" />{""}
             </li>
           </Link>
-          <div className="navbar-list-container">
-            <Link to="/" className="navbar-elements">
+          <div className="navbar-list-container">                                                                 
+            <Link to="/" className="navbar-elements">                                                     
               <li>Home</li>
             </Link>
             {token ? (
@@ -32,7 +32,7 @@ const Navbar = () => {
               </Link>
             ) : (
               <Link to="/Login" className="navbar-elements">
-                <button className="login-button" >Login</button>
+                <button className="login-button" >Login</button> 
               </Link>
             )}
             <Link to="/Signin" className="navbar-elements">
