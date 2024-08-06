@@ -1,0 +1,202 @@
+[33mcommit 89dd2f4bb369fcf8836cef511f8d2f7c3e485dca[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mramarao[m[33m, [m[1;31morigin/suresh[m[33m)[m
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Tue Aug 6 04:10:15 2024 +0530
+
+    dashbord changes
+
+[33mcommit ccbad2f2d877b403a0d8a39b5e82c0cdc287c8e7[m
+Merge: 123a218 3a36c9d
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Mon Aug 5 20:19:40 2024 +0530
+
+    Merge branch 'main' of https://github.com/kalingaramarao181/ChatApp into suresh
+
+[33mcommit 123a218ad5c11d5c4dda25676b0595a8753c7fdd[m
+Merge: 9e390e2 8a18bcf
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Mon Aug 5 20:18:48 2024 +0530
+
+    new
+
+[33mcommit 9e390e2fa04e8e653e2420b52055285664190f52[m
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Mon Aug 5 20:09:14 2024 +0530
+
+    ok
+
+[33mcommit 3a36c9d11b5c7c8aa2ea96399f6a6f443ad0b01e[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Mon Aug 5 20:04:34 2024 +0530
+
+    add time to messages
+
+[33mcommit 238c7823fb8019338e3d362f731281ad4b3a267c[m
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Sat Aug 3 04:16:53 2024 +0530
+
+    chat-changes
+
+[33mcommit 8a18bcfa9d69fcff35c6313cb196cf01b1768b2a[m[33m ([m[1;31morigin/ramarao[m[33m)[m
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Sat Aug 3 00:28:19 2024 +0530
+
+    add some changes in dashboard
+
+[33mcommit 0f251a4dbd1a8c65136236c5f68100e45fa8eb4d[m
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Fri Aug 2 03:13:57 2024 +0530
+
+    adding chat dashboard and its changes
+
+[33mcommit 61a25fb09f338999eac186d2879dce5055e638d7[m
+Merge: 0626e93 0c7cefa
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Thu Aug 1 03:52:14 2024 +0530
+
+    final
+
+[33mcommit 0626e933c2c4e796990bccce7415f8a542e2a379[m
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Thu Aug 1 03:14:50 2024 +0530
+
+    logincsschanges
+
+[33mcommit 0c7cefa727817018ff84ff4420a49378ea54ec8c[m
+Merge: 8deb35f 6f1c2ad
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Thu Aug 1 03:09:52 2024 +0530
+
+    a small changes at dashboard
+
+[33mcommit 6f1c2add56b7c64ec14eaca930536515243dad33[m
+Merge: cc5fb99 207a885
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Thu Aug 1 02:47:20 2024 +0530
+
+    frontend
+
+[33mcommit 8deb35f65b63c7de559ed7124ad9410e9b008fc3[m
+Merge: 207a885 cc5fb99
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Thu Aug 1 02:46:53 2024 +0530
+
+    Adding Chat Dashboard
+
+[33mcommit cc5fb99c48c7d2ba910716a3951c2f6c10f140de[m
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Wed Jul 31 23:49:25 2024 +0530
+
+    small changes
+
+[33mcommit 207a885a9b7f2c819478e55d24d4fba300f03959[m
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Wed Jul 31 23:42:50 2024 +0530
+
+    adding chat api's
+
+[33mcommit 8da6fd64db3dad41eb26de9fe78b5f95c159cc26[m
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Wed Jul 31 21:25:16 2024 +0530
+
+    dashv=boardpage
+
+[33mcommit 842ddee061dfbc1c4e7e06afad562f04d4d1abfa[m
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Wed Jul 31 02:51:25 2024 +0530
+
+    login
+
+[33mcommit cc3ace8fd06fba6126d0fd4085778c2e76ec156a[m
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Wed Jul 31 02:14:04 2024 +0530
+
+    add login
+
+[33mcommit 93248645dc6cd3593dd809c33dd09b3a648a63b4[m
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Wed Jul 31 01:52:32 2024 +0530
+
+    login
+
+[33mcommit 876bd69faac45058a59c71be0271f8288b73f230[m
+Merge: dcf9d5d 9cf7d0b
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Tue Jul 30 23:30:55 2024 +0530
+
+    Merge branch 'ramarao' of https://github.com/kalingaramarao181/ChatApp into suresh
+
+[33mcommit 9cf7d0b3bf455f1ba15c5ae20c24a53e8dde5d8a[m
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Tue Jul 30 23:29:54 2024 +0530
+
+    user login and signup
+
+[33mcommit b167622a4df0f08a18f2c49eea3886f60cdcc1e8[m
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Tue Jul 30 20:35:55 2024 +0530
+
+    added server authantication
+
+[33mcommit dcf9d5de7987c126d8fe4e9e43e9280711521f5d[m
+Merge: 0fcd9e5 3a7a682
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Tue Jul 30 04:15:36 2024 +0530
+
+    Merge branch 'ramarao' of https://github.com/kalingaramarao181/ChatApp into suresh
+
+[33mcommit b6596c1611233f6ad70413a6c1d61965c4785050[m
+Merge: 3a7a682 0fcd9e5
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Tue Jul 30 04:14:41 2024 +0530
+
+    Merge branch 'suresh' of https://github.com/kalingaramarao181/ChatApp into ramarao
+
+[33mcommit 0fcd9e58a51aa0b6be3069ed0be95758a00756d3[m
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Tue Jul 30 04:13:52 2024 +0530
+
+    frontend
+
+[33mcommit 3a7a68213213439e91114c4f69103ed340d3b352[m
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Tue Jul 30 04:13:03 2024 +0530
+
+    write some server users api's
+
+[33mcommit 39380b4a82e7b6949cda63910c9aab09faac217f[m
+Merge: 4fbf75e c6072e8
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Tue Jul 30 00:17:57 2024 +0530
+
+    Merge branch 'ramarao' of https://github.com/kalingaramarao181/ChatApp into suresh
+
+[33mcommit 0c53e86a2da449ede3abf2d03cf6a48782d1e578[m
+Merge: c6072e8 4fbf75e
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Tue Jul 30 00:17:25 2024 +0530
+
+    Merge branch 'suresh' of https://github.com/kalingaramarao181/ChatApp into ramarao
+
+[33mcommit 4fbf75e39cc349ecd399d9a848a77c7d0236be64[m
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Tue Jul 30 00:16:50 2024 +0530
+
+    second
+
+[33mcommit c6072e8735caabb226d58501523c77a4f12a7973[m
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Tue Jul 30 00:14:59 2024 +0530
+
+    commit1
+
+[33mcommit 5428f49039b82829ac87fff9e1112952cdc690ec[m
+Author: attadasuresh <sureshattada12233@gmail.com>
+Date:   Mon Jul 29 23:16:49 2024 +0530
+
+    forst commit
+
+[33mcommit 076a55ab025324a7dec60fa6d4fc3e5143ddce9c[m[33m ([m[1;32msuresh[m[33m, [m[1;32mclient[m[33m, [m[1;32mchange[m[33m)[m
+Author: Kalinga Ramarao <kalingaramarao181@gmail.com>
+Date:   Mon Jul 29 23:02:46 2024 +0530
+
+    starting app
