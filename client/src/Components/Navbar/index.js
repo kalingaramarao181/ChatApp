@@ -2,14 +2,25 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import "./index.css";
+import axios from "axios";
+import { baseUrl } from "../config";
 
 const Navbar = () => {
   const token = Cookies.get("jwtToken");
+  const senderId = localStorage.getItem("senderData") && JSON.parse(localStorage.getItem("senderData")).id
 
   const onClickLogout =()=>{
     Cookies.remove('jwtToken')
     localStorage.removeItem("senderData")
-    window.location.reload()
+    axios.put(`${baseUrl}update-logout/${senderId}`)
+    .then(res => {
+      console.log(res.data);
+      window.location.reload()
+    })
+    .catch(err => {
+      console.log(err);
+      
+    })
   }
 
 

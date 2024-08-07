@@ -44,7 +44,9 @@ router.get('/chatted-users/:senderid', (req, res) => {
             userdata.fullname, 
             userdata.email, 
             userdata.phoneno, 
-            userdata.lastlogin 
+            userdata.lastlogin,
+            userdata.lastseen,
+            userdata.loginstatus
         FROM 
             userdata 
         JOIN 
@@ -113,6 +115,20 @@ router.put('/users/:id', (req, res) => {
     const { fullname, email, password, phoneno, dateofbirth, address } = req.body; // Example fields
     const sql = 'UPDATE userdata SET fullname = ?, email = ?, password = ?, phoneno = ?, dateofbirth = ?, address = ? WHERE id = ?';
     db.query(sql, [fullname, email, password, phoneno, dateofbirth, address, id], (err, result) => {
+        if (err) {
+            console.error('Error updating user:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json({ message: 'User updated successfully' });
+        }
+    });
+});
+
+router.put('/update-logout/:id', (req, res) => {
+    const { id } = req.params;
+    const date = new Date()
+    const sql = 'UPDATE userdata SET lastseen = ?, loginstatus = ? WHERE id = ?';
+    db.query(sql, [date, false, id], (err, result) => {
         if (err) {
             console.error('Error updating user:', err);
             res.status(500).json({ error: 'Internal Server Error' });

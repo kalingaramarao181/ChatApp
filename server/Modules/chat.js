@@ -35,6 +35,29 @@ router.put("/message/:messageId", (req, res) => {
     })
 })
 
+router.put("/read-message", (req, res) => {
+    const { messageIds } = req.body;
+
+    if (!Array.isArray(messageIds) || messageIds.length === 0) {
+        return res.status(400).send('No message IDs provided');
+    }
+
+    // Create a placeholder string for the `IN` clause
+    const placeholders = messageIds.map(() => '?').join(',');
+    const query = `UPDATE messages SET \`read\` = ? WHERE id IN (${placeholders})`;
+
+    // Use messageIds array as values for the placeholders
+    const values = [true, ...messageIds];
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error('Error updating messages:', err);
+            return res.status(500).send('Internal server error');
+        }
+        res.status(200).send('Messages updated');
+    });
+});
+
 router.delete("/message/:messageId", (req, res) => {
     const {messageId} = req.params;
     const query = `DELETE FROM messages WHERE id = ?`
