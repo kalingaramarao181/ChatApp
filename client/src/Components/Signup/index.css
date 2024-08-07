@@ -74,3 +74,8 @@
     background-color: rgb(209, 144, 4);
 
   }
+  .keep-login{
+    align-self: flex-end;
+    font-weight: 600;
+    font-family: "Roboto";
+  }

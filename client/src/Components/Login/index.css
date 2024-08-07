@@ -8,6 +8,11 @@
   justify-content: space-around;
   padding: 70px;
 }
+.keep-login{
+  align-self: flex-end;
+  font-weight: 600;
+  font-family: "Roboto";
+}
 
 .login-main-container::before {
   content: '';

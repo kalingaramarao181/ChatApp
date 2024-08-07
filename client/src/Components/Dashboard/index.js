@@ -12,29 +12,24 @@ import { FiArrowLeftCircle } from "react-icons/fi";
 
 const Dashboard = () => {
   const senderData = JSON.parse(localStorage.getItem('senderData')) || { id: 1, fullname: 'John Doe' };
-  const chatEndRef = useRef(null);
-  const [message, setMessage] = useState({
-    senderid: senderData.id,
-    receiverid: 0,
-    message: '',
-    timeStamp: new Date()
-  });
-  const [chatUsersData, setChatUsersData] = useState([]);
-  const [usersData, setUsersData] = useState([]);
-  const [chat, setChat] = useState([]);
-  const [unreadCounts, setUnreadCounts] = useState([]);
-
+  const [message, setMessage] = useState({ senderid: senderData.id, receiverid: 0, message: '', timeStamp: new Date() });
+  const [editMessage, setEditMessage] = useState({ message: "", messageId: 0 });
   const [chattingUser, setChattingUser] = useState({});
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [chat, setChat] = useState([]);
+  const [usersData, setUsersData] = useState([])
+  const [selectedIds, setSelectedIds] = useState([])
+  const [unreadCounts, setUnreadCounts] = useState([]);
+  const [chatUsersData, setChatUsersData] = useState([]);
   const [viewEdit, setViewEdit] = useState(false)
+  const [usersView, setUsersView] = useState(false)
   const [editBarView, setEditBarView] = useState(false)
   const [selectInput, setSelectInput] = useState(false)
-  const [selectedIds, setSelectedIds] = useState([])
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isSelectMessageEdit, setIsSelectMessageEdit] = useState(false)
-  const [editMessage, setEditMessage] = useState({ message: "", messageId: 0 });
-  const [usersView, setUsersView] = useState(false)
   const [searchValue, setSearchValue] = useState("")
+  const chatEndRef = useRef(null);
 
+  
   useEffect(() => {
     axios.get(`${baseUrl}chatted-users/${senderData.id}`)
       .then((res) => {
@@ -294,7 +289,7 @@ const Dashboard = () => {
                 </div>
                 {editBarView === eachMessage.id &&
                   <div className='edit-bar-container' style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
-                    <button onClick={() => handleMessageEdit(eachMessage.id, eachMessage.message)} className='edit-bar-button'>Edit</button>
+                    {eachMessage.senderid === senderData.id && <button onClick={() => handleMessageEdit(eachMessage.id, eachMessage.message)} className='edit-bar-button'>Edit</button>}
                     <button onClick={() => handleMessageSelect(eachMessage.id)} className='edit-bar-button'>Select</button>
                     <button onClick={() => handleMessageDelete(eachMessage.id)} className='edit-bar-button'>Delete</button>
                   </div>

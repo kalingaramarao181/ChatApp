@@ -39,27 +39,31 @@ router.get('/users/:id', (req, res) => {
 router.get('/chatted-users/:senderid', (req, res) => {
     const { senderid } = req.params;
     const sql = `
-        SELECT DISTINCT 
-            userdata.id, 
-            userdata.fullname, 
-            userdata.email, 
-            userdata.phoneno, 
-            userdata.lastlogin,
-            userdata.lastseen,
-            userdata.loginstatus
-        FROM 
-            userdata 
-        JOIN 
-            messages 
-            ON (userdata.id = messages.senderid AND messages.receiverid = ?) 
-            OR (userdata.id = messages.receiverid AND messages.senderid = ?)
-        WHERE 
-            userdata.id != ? 
-        ORDER BY 
-            messages.timestamp;
+    SELECT 
+        DISTINCT userdata.id, 
+        userdata.fullname, 
+        userdata.email, 
+        userdata.phoneno, 
+        userdata.lastlogin,
+        userdata.lastseen,
+        userdata.loginstatus
+    FROM 
+        userdata 
+    JOIN 
+        messages 
+        ON (userdata.id = messages.senderid AND messages.receiverid = ?) 
+        OR (userdata.id = messages.receiverid AND messages.senderid = ?)
+    WHERE 
+        userdata.id != ? 
+    ORDER BY 
+        (SELECT MAX(timestamp) 
+        FROM messages 
+        WHERE (messages.senderid = userdata.id AND messages.receiverid = ?) 
+            OR (messages.receiverid = userdata.id AND messages.senderid = ?)
+        ) DESC;
     `;
 
-    db.query(sql, [senderid, senderid, senderid], (err, data) => {
+    db.query(sql, [senderid, senderid, senderid, senderid, senderid], (err, data) => {
         if (err) {
             console.error('Error fetching user:', err);
             res.status(500).json({ error: 'Internal Server Error' });
