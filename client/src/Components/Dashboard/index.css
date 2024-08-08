@@ -1,14 +1,17 @@
+/* 1 */
 .dashboard-total-container {
     display: flex;
     flex-direction: row;
     margin: 0.5vw;
     height: 87vh;
+    overflow: hidden;
 }
 
+/* 2,2 */
 .dashboard-sidebar-main-container {
     width: 22vw;
     box-shadow: 0 2px 8px 0 rgba(14, 13, 13, 0.678), 0 4px 20px 0 rgba(0, 0, 0, 0.603);
-    padding:0.5vw;
+    padding: 0.5vw;
     background-image: url("https://e0.pxfuel.com/wallpapers/249/8/desktop-wallpaper-chat-whatsapp-chat-thumbnail.jpg");
     color: rgb(255, 244, 244);
     height: 84vh;
@@ -17,6 +20,7 @@
     background-size: cover;
 }
 
+/* 3,3 */
 .sidebar-profile-container {
     display: flex;
     flex-direction: row;
@@ -28,12 +32,8 @@
     width: 21vw;
 }
 
-.sidebar-profile-heading {
-    font-family: roboto;
-    padding-left: 10px;
-    font-size: 2vw;
-}
-.back-button{
+/* 4 */
+.back-button {
     background-color: transparent;
     border: none;
     font-size: 2vw;
@@ -41,43 +41,73 @@
     margin-bottom: auto;
 }
 
-.sidebar-profil-icon{
-    font-size: 1.4vw;
-    font-weight: 100;
-    border: 1px solid white;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50px;
+/* 5 */
+.search-input{
+    height: 5vh;
+    width: 20vw;
+    border-radius: 20px;
+    padding-left: 1vw;
+    border: none;
 }
+.search-input:focus{
+    outline: none;
+}
+
+/* 6,6 */
+.sidebar-profil-container-inactive, .sidebar-profil-container-active {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    width: 21vw;
+    height: 4vw;
+    margin-top: 1vh;
+}
+
+/* 6,6 */
+.sidebar-profil-container-active {
+    background-image: url("https://e0.pxfuel.com/wallpapers/249/8/desktop-wallpaper-chat-whatsapp-chat-thumbnail.jpg");
+}
+
+/* 7,7,7 */
 .sidebar-profile-icon {
     position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 50px; /* Adjust size as needed */
-    height: 50px; /* Adjust size as needed */
-    border: 2px solid white; /* Solid round border */
-    border-radius: 50%; /* Makes the border round */
-    font-size: 20px; /* Adjust font size as needed */
+    width: 50px;
+    height: 50px;
+    border: 2px solid white;
+    border-radius: 50%;
+    font-size: 20px;
     text-align: center;
-    line-height: 50px; /* Center text vertically */
-  }
-  
-  .status-dot {
+    line-height: 50px;
+}
+
+/* 8,8,8 */
+.sidebar-profile-heading {
+    font-family: roboto;
+    padding-left: 10px;
+    font-size: 1.5vw;
+}
+
+/* 9 */
+.status-dot {
     position: absolute;
     width: 12px;
     height: 12px;
-    background-color: green; 
-    border-radius: 50%; 
-    top: 38px; 
-    right: 5px; 
-  }
+    background-color: green;
+    border-radius: 50%;
+    top: 38px;
+    right: 5px;
+}
 
-  .unread-count{
+/* 10 */
+.unread-count {
     background-color: green;
     font-size: 0.8vw;
     height: 20px;
@@ -86,28 +116,11 @@
     border-radius: 50%;
     text-align: center;
     margin-left: 1vw;
-  }
-
-.sidebar-profil-container-inactive,  .sidebar-profil-container-active{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    background-color: transparent;  
-    border: none;
-    color: white;
-    cursor: pointer;
-    width: 21vw;
-    height: 4vw;
-    margin-top: 1vh;
-}
-.sidebar-profil-container-active{
-    background-image: url("https://e0.pxfuel.com/wallpapers/249/8/desktop-wallpaper-chat-whatsapp-chat-thumbnail.jpg");
-    
 }
 
+/* 11 */
 .dashboard-chat-container {
-    position: relative; /* Ensure the container is positioned relative for the pseudo-element */
+    position: relative;
     width: 76vw;
     height: 84vh;
     display: flex;
@@ -119,6 +132,7 @@
     padding: 1vw;
 }
 
+/* 11 */
 .dashboard-chat-container::before {
     content: "";
     position: absolute;
@@ -128,82 +142,223 @@
     height: 100%;
     background-image: url("https://cdn.wallpapersafari.com/27/32/jt4AoG.jpg");
     background-size: cover;
-    filter: blur(3px); /* Adjust the blur intensity as needed */
-    z-index: 0; /* Ensure the blurred image is behind the content */
-    pointer-events: none; /* Ensure the overlay doesn't interfere with interactions */
+    filter: blur(3px);
+    z-index: 0;
+    pointer-events: none;
 }
 
+/* 11 */
 .dashboard-chat-container > * {
-    position: relative; /* Ensure the child elements are above the pseudo-element */
+    position: relative;
     z-index: 1;
 }
 
-.last-seen{
-    font-size: 1vw;
+/* 12 */
+.name-search{
+    color: black;
 }
-.last-seen-online{
-    font-size: 1vw;
+
+/* 13 */
+.last-seen-online {
     color: green;
     font-weight: bold;
 }
 
+/* 13,14 */
+.last-seen-online, .last-seen {
+    font-size: 1vw;
+}
 
+/* 15 */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
+/* 16 */
+.dashboard-chat-box-container {
+    height: 68vh;
+    width: 73vw;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 1vw;
+}
 
+/* 16 */
+.dashboard-chat-box-container::-webkit-scrollbar-thumb {
+    background: green;
+    border-radius: 10px;
+}
+
+/* 16 */
+.dashboard-chat-box-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* 16 */
+.dashboard-chat-box-container::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* 17 */
+.message-input-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+}
+
+/* 18 */
+.select-input {
+    margin-right: 5px;
+}
+
+/* 19 */
+.message-sender {
+    background-image: url("https://e0.pxfuel.com/wallpapers/249/8/desktop-wallpaper-chat-whatsapp-chat-thumbnail.jpg");
+    color: white;
+    align-self: flex-end;
+}
+
+/* 19,20 */
+.message-sender, .message-receiver {
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 5px;
+    font-size: 1.2vw;
+}
+
+/* 20 */
+.message-receiver {
+    background-color: white;
+    color: black;
+    align-self: flex-start;
+}
+
+/* 21 */
+.message-time-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 21 */
+.message-span{
+    font-size: 1.5vw;
+    font-family: roboto;
+    word-wrap: break-word;    
+    word-break: break-word;   
+    overflow-wrap: break-word; 
+    white-space: normal;      
+    line-height: 1.5;
+}
+
+/* 22 */
+.message-feature-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 1vw;
+}
+
+/* 23 */
+.message-feature-empty-button {
+    width: 30px;
+    font-size: 1vw;
+}
+
+/* 24 */
+.time-span {
+    font-size: 0.8vw;
+    margin-left: 5px;
+}
+
+/* 25 */
+.edit-bar-container{
+    background-color: white;
+}
+
+/* 26 */
+.edit-bar-button {
+    background-color: transparent;
+    color: black;
+    border: none;
+}
+
+/* 27 */
+.emoji-input{
+    font-size: 3vw;
+}
+
+/* 28 */
 .dashboard-chat-main-container {
     width: 73vw;
     height: 9vh;
     padding: 0.5vw;
     border-radius: 5px;
-    border: none;
     background-image: url("https://e0.pxfuel.com/wallpapers/249/8/desktop-wallpaper-chat-whatsapp-chat-thumbnail.jpg");
-
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     position: absolute;
     top: 75vh;
-    
-    
 }
 
+/* 1 */
+.dashboard-input-elements-container-select-stage{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 70vw;
+    height: 7vh;    
+    background-color: white;
+    padding-left: 0.7vw;
+    align-items: center;
+    border-radius: 10px;
+}
+
+/* 1 */
 .dashboard-input-text {
     width: 61vw;
     height: 7vh;
     padding-left: 0.5vw;
     border-radius: 5px;
     border: none;
-
 }
 
+/* 1 */
 .dashboard-input-text:focus {
     border: none;
     outline: none;
 }
 
+/* 1 */
 .dashboard-input-elements-container {
     background-color: white;
     display: flex;
     flex-direction: row;
-    justify-content: space-between ;
+    justify-content: space-between;
     align-items: center;
     width: 70vw;
     height: 7vh;
-  padding-right: 0.7vw;
+    padding-right: 0.7vw;
     border-radius: 10px;
-    align-items: center;
-
-
 }
 
+/* 1 */
 .dashboard-text-emoji-button {
     font-size: 2.5vw;
     background-color: transparent;
     border: none;
-    
 }
 
+/* 1 */
 .dashboard-text-emoji-container-send {
     font-size: 3vw;
     margin-left: 0.5vw;
@@ -213,168 +368,248 @@
     cursor: pointer;
 }
 
+/* 1 */
 .dashboard-text-emoji-container-send:hover {
     color: rgb(248, 147, 15);
 }
 
+/* 1 */
 .dashboard-button {
     border: none;
     background-color: transparent;
 }
-.emoji-input{
-    position: relative;
-}
-
-.chat-container{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
 
 
-.dashboard-chat-box-container{
-    height: 68vh;
-    width: 73vw;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 1vw;
-}
-.dashboard-chat-box-container::-webkit-scrollbar-thumb {
-    background: rgb(153, 153, 250);
-    border-radius: 10px;
-}
 
-.dashboard-chat-box-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-  
-.dashboard-chat-box-container::-webkit-scrollbar {
-    width: 5px;
-}
-.edit-bar-button{
-    background-color: transparent;
-    color: black;
-    border: none;
-}
-.message-feature-button{
-    background-color: transparent;
-    border: none;
-    color: white;
+
+
+
+
+
+/* 1 */
+.selected-items {
     font-size: 1vw;
-    
-    align-self: flex-end;
+    font-weight: bold;
+    color: black;
 }
-.message-feature-empty-button{
-    width: 30px;
-    font-size: 15px;
-}
-.message-receiver, .message-sender{
-    font-size: 1.5vw;
-    background-image: url("https://e0.pxfuel.com/wallpapers/249/8/desktop-wallpaper-chat-whatsapp-chat-thumbnail.jpg");
 
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-    padding: 0.3vw;
-    padding-left: 1vw;
-    padding-right: 1vw;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    margin:0.5vw ;
-  
-}
-.message-time-container{
-    display:flex ;
-    flex-direction: column;
-    justify-content: space-between;
-
-}
-.message-span{
-    max-width: 20vw;
-    overflow-wrap:break-word ;
-    margin-right: 0.8vw;
-}
-.time-span{
- align-self: flex-end;
- font-size: 0.8vw;
-}
-.message-receiver{
-    background-color: rgb(255, 255, 255);
-    border: 0.5px solid rgb(189, 180, 180);
-    background-image: none;
-    color: rgb(27, 26, 26);
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 0px;
-
-
-}
-.edit-bar-container{
-    display: flex;
-    background-color: white;
-    border-radius: 10px;
-    padding: 0.4vw;
-    border: 1px solid black;
-    flex-direction: row;
-}
-.add-people-button{
-    border: 2px solid white;
-    background-color: transparent;
-    font-size: 2vw;
-    height: 45px;
-    width:45px;
-    padding: 5px;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50px;
-}
-.search-input{
-    width: 500px;
-    height: 40px;
-    border-radius: 30px;
-    padding: 10px;
-    border: none;
-}
-.search-input:focus{
-    outline: none;
-}
-.message-input-container{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-}
-.dashboard-input-elements-container-select-stage{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 70vw;
-    height: 7vh;
-    background-color: white;
-    padding-left: 0.7vw;
-    align-items: center;
-    border-radius: 10px;
-}
-.share-delete-container{
+/* 1 */
+.share-delete-container {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
 }
-.selected-items{
-    font-size: 1.2vw;
-    font-weight: 600;
-    padding-top: 1.5vh;
+
+@media (max-width: 1024px) {
+    /* 1 */
+    .dashboard-total-container {
+        flex-direction: column;
+    }
+
+    /* 2 */
+    .dashboard-sidebar-main-container {
+        width: 100%;
+        height: 20vh;
+    }
+
+    /* 11 */
+    .dashboard-chat-container {
+        width: 100%;
+        height: 70vh;
+    }
+
+    /* 28 */
+    .dashboard-chat-main-container {
+        width: 100%;
+        height: 20vh;
+        top: 60vh;
+    }
+
+    /* 1 */
+    .dashboard-input-text {
+        width: 80%;
+    }
+
+    /* 1 */
+    .dashboard-text-emoji-container-send {
+        font-size: 2vw;
+    }
 }
-.name-search{
-    font-family: roboto;
+
+@media (max-width: 768px) {
+    /* 8,8,8 */
+    .sidebar-profile-heading {
+        font-size: 4vw;
+    }
+
+    /* 7,7,7 */
+    .sidebar-profile-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+        line-height: 40px;
+    }
+
+    /* 16 */
+    .dashboard-chat-box-container {
+        height: 70vh;
+        width: 95vw;
+    }
+
+    /* 28 */
+    .dashboard-chat-main-container {
+        height: 15vh;
+    }
+
+    /* 1 */
+    .dashboard-input-text {
+        height: 5vh;
+        font-size: 3vw;
+    }
+
+    /* 1 */
+    .dashboard-text-emoji-container-send {
+        font-size: 4vw;
+    }
+
+    /* 2 */
+    .dashboard-sidebar-main-container {
+        height: 25vh;
+    }
+
+    /* 13,14 */
+    .last-seen, .last-seen-online {
+        font-size: 2vw;
+    }
+}
+
+@media (max-width: 480px) {
+    /* 1 */
+    .dashboard-total-container{
+        height: 93vh;
+    }
+
+    /* 2 */
+    .dashboard-sidebar-main-container {
+        width: 100%;
+        height: 40vh;
+        height: auto;
+    }
+
+    /* 8,8,8 */
+    .sidebar-profile-heading {
+        font-size: 5vw;
+    }
+
+    /* 5,5 */
+    .chatted-users-container{
+        height: 9vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    /* 6,6 */
+    .sidebar-profil-container-inactive, .sidebar-profil-container-active {
+        height: auto;
+        padding: 10px;
+        width: 96vw;
+    }
+
+    /* 11 */
+    .dashboard-chat-container {
+        width: 100%;
+        height: 80vh;
+    }
+
+    /* 15 */
+    .chat-container{
+        width: 95vw;
+    }
+
+    /* 16 */
+    .dashboard-chat-box-container {
+        height: 60vh;
+        width: 95vw;
+    }
+
+    /* 28 */
+    .dashboard-chat-main-container {
+        top: 66vh;
+        height: 7vh;
+        width: 95vw;
+    }
+
+    /* 1 */
+    .dashboard-input-text {
+        width: 75%;
+        font-size: 4vw;
+        margin-left: 1vw;
+    }
+
+    /* 1 */
+    .dashboard-input-elements-container {
+        width: 86vw;
+        height: 6vh;
+        padding-right: 0.7vw;
+        border-radius: 10px;
+        margin-left: 1vw;
+    }
+
+    /* 1 */
+    .dashboard-text-emoji-container-send {
+        font-size: 8vw;
+    }
+
+    /* 3 */
+    .sidebar-profile-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border: 2px solid;
+        height: 9vh;
+        margin: 1vw;
+        width: 96vw;
+    }
+    /* 4 */
+    .back-button {
+        border: none;
+        font-size: 5vw;
+        color: white;
+        margin-bottom: auto;
+    }
+    /* 5 */
+    .search-input{
+        height: 5vh;
+        width: 80vw;
+        border-radius: 20px;
+        padding-left: 3vw;
+        border: none;
+    }
+
+    /* 19,20 */
+    .message-sender, .message-receiver {
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 5px;
+        font-size: 2.2vw;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+    /* 1 */
+    .dashboard-input-elements-container-select-stage{
+        width: 85vw;
+        height: 6vh;    
+    }
+    /* 1 */
+    .selected-items {
+        font-size: 3vw;
+        font-weight: bold;
+        color: black;
+        padding: 0px;
+    }
 }

@@ -9,6 +9,7 @@ import { MdDelete } from "react-icons/md";
 import { IoIosShareAlt } from "react-icons/io";
 import { IoPersonAddOutline } from "react-icons/io5";
 import { FiArrowLeftCircle } from "react-icons/fi";
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 const Dashboard = () => {
   const senderData = JSON.parse(localStorage.getItem('senderData')) || { id: 1, fullname: 'John Doe' };
@@ -29,7 +30,7 @@ const Dashboard = () => {
   const [searchValue, setSearchValue] = useState("")
   const chatEndRef = useRef(null);
 
-  
+
   useEffect(() => {
     axios.get(`${baseUrl}chatted-users/${senderData.id}`)
       .then((res) => {
@@ -173,6 +174,7 @@ const Dashboard = () => {
           console.log('Error marking messages as read:', err);
         });
     }
+    setSelectInput(false)
   };
 
   const handleClickSelectUser = (id, user) => {
@@ -214,86 +216,159 @@ const Dashboard = () => {
   }, [chatUsersData,]);
 
 
-
   const searchUsersData = usersData.filter(eachUser => eachUser.fullname.trim().toLocaleLowerCase().includes(searchValue.toLocaleLowerCase()) && eachUser.id !== senderData.id)
 
 
-  return (
-    <div className='dashboard-total-container'>
-      {usersView ? <div className='dashboard-sidebar-main-container'>
+  const allUsers = () => {
+    return (
+      <div className='dashboard-sidebar-main-container'>
         <div className='sidebar-profile-container'>
           <button onClick={() => setUsersView(false)} className='back-button'><FiArrowLeftCircle /></button>
           <input onChange={(e) => setSearchValue(e.target.value)} type='search' className='search-input' placeholder='Search Users' />
         </div>
-
-        {searchUsersData.map(eachUser => (
-          <button
-            key={eachUser.id}
-            onClick={() => handleClickSelectUser(eachUser.id, eachUser)}
-            className={eachUser.id === message.receiverid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
-          >
-            <p className='sidebar-profile-icon'>
-              {eachUser.fullname.split(" ").length >= 1 ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0] : eachUser.fullname[0]}
-            </p>
-            <h1 className='sidebar-profile-heading'>{eachUser.fullname}</h1>
-          </button>
-        ))}
-      </div> : <div className='dashboard-sidebar-main-container'>
-        <div className='sidebar-profile-container'>
-          <h1 className='sidebar-profile-heading'>{senderData.fullname}</h1>
-          <button onClick={() => setUsersView(true)} className='add-people-button'><IoPersonAddOutline /></button>
-        </div>
-
-        {chatUsersData.map(eachUser => {
-          return (
-            <><button
+        <div className='chatted-users-container'>
+          {searchUsersData.map(eachUser => (
+            <button
               key={eachUser.id}
-              onClick={() => handleClickSendUser(eachUser.id, eachUser)}
+              onClick={() => handleClickSelectUser(eachUser.id, eachUser)}
               className={eachUser.id === message.receiverid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
             >
-              <p className="sidebar-profile-icon">
-                {eachUser.fullname.split(" ").length >= 1
-                  ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0]
-                  : eachUser.fullname[0]}
-                {eachUser.loginstatus === 1 && <span className="status-dot"></span>}
+              <p className='sidebar-profile-icon'>
+                {eachUser.fullname.split(" ").length >= 1 ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0] : eachUser.fullname[0]}
               </p>
               <h1 className='sidebar-profile-heading'>{eachUser.fullname}</h1>
-              {unreadCounts[eachUser.id] !== 0 && <span className='unread-count'>{unreadCounts[eachUser.id]}</span>}
             </button>
-            </>
-          )
-        })}
-      </div>}
-      <div className='dashboard-chat-container'>
-        <div>
-          <h1 className='name-search'>{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
-            {chattingUser.fullname && chattingUser.loginstatus ? <span className='last-seen-online'> Online</span>  : <span className='last-seen'> Last seen at {chattingUser.lastseen ? formatAMPM(new Date(chattingUser.lastseen)) : chatUsersData.length >= 1 && formatAMPM(new Date(chatUsersData[0].lastseen)) }</span>}</h1>
+          ))}
         </div>
+      </div>
+    )
+  }
+
+  const chattedUsers = () => {
+    return (
+      <div className='dashboard-sidebar-main-container'>
+        <div className='sidebar-profile-container'>
+          <h1 className='sidebar-profile-heading'>{senderData.fullname}</h1>
+          <button onClick={() => setUsersView(true)} className='sidebar-profile-icon'><IoPersonAddOutline /></button>
+        </div>
+        <div className='chatted-users-container'>
+          {chatUsersData.map(eachUser => {
+            return (
+              <><button
+                key={eachUser.id}
+                onClick={() => handleClickSendUser(eachUser.id, eachUser)}
+                className={eachUser.id === message.receiverid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
+              >
+                <p className="sidebar-profile-icon">
+                  {eachUser.fullname.split(" ").length >= 1
+                    ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0]
+                    : eachUser.fullname[0]}
+                  {eachUser.loginstatus === 1 && <span className="status-dot"></span>}
+                </p>
+                <h1 className='sidebar-profile-heading'>{eachUser.fullname}</h1>
+                {unreadCounts[eachUser.id] !== 0 && <span className='unread-count'>{unreadCounts[eachUser.id]}</span>}
+              </button>
+              </>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+
+  const inputBarSelectedFeaturesView = () => {
+    return (
+      <div className='dashboard-input-elements-container-select-stage'>
+        <p className='selected-items'>Selected {selectedIds.length}</p>
+        <div className='share-delete-container'>
+          <button className='dashboard-button' onClick={onClickDeleteSelected}>
+            <MdDelete className='dashboard-text-emoji-container-send' />
+          </button>
+
+          <button className='dashboard-button'>
+            <IoIosShareAlt className='dashboard-text-emoji-container-send' />
+          </button>
+        </div>
+      </div>)
+  }
+
+  const messageFeatures = (eachMessage) => {
+    return (
+      <div className='edit-bar-container' style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
+        {eachMessage.senderid === senderData.id && <button onClick={() => handleMessageEdit(eachMessage.id, eachMessage.message)} className='edit-bar-button'>Edit</button>}
+        <button onClick={() => handleMessageSelect(eachMessage.id)} className='edit-bar-button'>Select</button>
+        <button onClick={() => handleMessageDelete(eachMessage.id)} className='edit-bar-button'>Delete</button>
+        <CopyToClipboard text={eachMessage.message}>
+          <button onClick={() => alert('Text copied!')} className='edit-bar-button'>Copy</button>
+        </CopyToClipboard>
+      </div>
+    )
+  }
+
+  const inputBarEditView = () => {
+    return (
+      <div className='dashboard-input-elements-container'>
+        <input
+          type='text'
+          placeholder='Type your message...'
+          value={editMessage.message}
+          className='dashboard-input-text'
+          onChange={handleEditMessageChange}
+        />
+        <button className='dashboard-button' onClick={handleEditMessageSend}>
+          <BsFillSendFill className='dashboard-text-emoji-container-send' />
+        </button>
+      </div>
+    )
+  }
+
+  const inputBarMessageView = () => {
+    return (
+      <div className='dashboard-input-elements-container'>
+        <input
+          type='text'
+          placeholder='Type your message...'
+          value={message.message}
+          className='dashboard-input-text'
+          onChange={handleMessageChange}
+        />
+        <button className='dashboard-button' onClick={handleClickSend}>
+          <BsFillSendFill className='dashboard-text-emoji-container-send' />
+        </button>
+      </div>
+    )
+  }
+
+
+
+
+
+
+
+  return (
+    <div className='dashboard-total-container'>
+      {usersView ? allUsers() : chattedUsers()}
+      <div className='dashboard-chat-container'>
+          <h1 className='name-search'>{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
+            {chattingUser.fullname && chattingUser.loginstatus ? <span className='last-seen-online'> Online</span> : <span className='last-seen'> Last seen at {chattingUser.lastseen ? formatAMPM(new Date(chattingUser.lastseen)) : chatUsersData.length >= 1 && formatAMPM(new Date(chatUsersData[0].lastseen))}</span>}
+          </h1>
         <div className='chat-container'>
           <div className='dashboard-chat-box-container'>
             {chat.map((eachMessage, index) => {
               const timeStamp = new Date(eachMessage.timestamp)
-
               const time = formatAMPM(timeStamp)
               return <>
                 <div className='message-input-container' style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
                   {selectInput && <input className='select-input' id={eachMessage.id} onChange={onSelectMessage} type='checkbox' />}
-                  <p className={eachMessage.senderid === senderData.id ? 'message-sender' : 'message-receiver'} onMouseEnter={() => setViewEdit(eachMessage.id)} onMouseLeave={() => setViewEdit(false)} key={index} style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
+                  <p className={eachMessage.senderid === senderData.id ? 'message-sender' : 'message-receiver'} onMouseEnter={() => setViewEdit(eachMessage.id)} onMouseLeave={() => setViewEdit(false)} key={index}>
                     <span className='message-span'>{eachMessage.message}</span>
                     <div className='message-time-container'>
-                      {viewEdit === eachMessage.id ? <button onClick={() => setEditBarView(eachMessage.id)} style={{ color: eachMessage.senderid === senderData.id ? 'white' : 'black' }} className='message-feature-button'><FaRegEdit /></button> : <p className='message-feature-empty-button'>{` `}</p>}
+                      {viewEdit === eachMessage.id ? <button onClick={() => setEditBarView(eachMessage.id)} style={{ color: eachMessage.senderid === senderData.id ? 'white' : 'black' }} className='message-feature-button'><FaRegEdit /></button> : <p className='message-feature-empty-button'></p>}
                       <span className='time-span'>{time}</span>
                     </div>
                   </p>
-
                 </div>
-                {editBarView === eachMessage.id &&
-                  <div className='edit-bar-container' style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
-                    {eachMessage.senderid === senderData.id && <button onClick={() => handleMessageEdit(eachMessage.id, eachMessage.message)} className='edit-bar-button'>Edit</button>}
-                    <button onClick={() => handleMessageSelect(eachMessage.id)} className='edit-bar-button'>Select</button>
-                    <button onClick={() => handleMessageDelete(eachMessage.id)} className='edit-bar-button'>Delete</button>
-                  </div>
-                }
+                {editBarView === eachMessage.id && messageFeatures(eachMessage)}
               </>
             }
             )}
@@ -303,40 +378,8 @@ const Dashboard = () => {
           {showEmojiPicker && <EmojiPicker className='emoji-input' onEmojiClick={onEmojiClick} />}
         </div>
         <div className='dashboard-chat-main-container'>
-          {selectInput ? <div className='dashboard-input-elements-container-select-stage'>
-            <p className='selected-items'>Selected {selectedIds.length}</p>
-            <div className='share-delete-container'>
-              <button className='dashboard-button' onClick={onClickDeleteSelected}>
-                <MdDelete className='dashboard-text-emoji-container-send' />
-              </button>
-
-              <button className='dashboard-button'>
-                <IoIosShareAlt className='dashboard-text-emoji-container-send' />
-              </button>
-            </div>
-          </div> : isSelectMessageEdit ? <div className='dashboard-input-elements-container'>
-            <input
-              type='text'
-              placeholder='Message-Here'
-              value={editMessage.message}
-              className='dashboard-input-text'
-              onChange={handleEditMessageChange}
-            />
-            <button className='dashboard-button' onClick={handleEditMessageSend}>
-              <BsFillSendFill className='dashboard-text-emoji-container-send' />
-            </button>
-          </div> : <div className='dashboard-input-elements-container'>
-            <input
-              type='text'
-              placeholder='Message-Here'
-              value={message.message}
-              className='dashboard-input-text'
-              onChange={handleMessageChange}
-            />
-            <button className='dashboard-button' onClick={handleClickSend}>
-              <BsFillSendFill className='dashboard-text-emoji-container-send' />
-            </button>
-          </div>}
+          {selectInput ? inputBarSelectedFeaturesView() : isSelectMessageEdit ? inputBarEditView() : inputBarMessageView()
+          }
           <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className='dashboard-text-emoji-button'>😀</button>
         </div>
       </div>

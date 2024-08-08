@@ -1,34 +1,83 @@
-.Navbar-container{
+/* Navbar Container */
+.Navbar-container {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    width: 98.5vw;
+    width: 100%;
     background-image: url("/public/images/desktop-wallpaper-blue-plain-backgrounds-backgrounds-plain-android.jpg");
-background-size: cover;     
-    margin-bottom: 0px;
+    background-size: cover;
+    margin-bottom: 0;
     align-items: center;
-
+    padding: 1vw 2vw; /* Added padding for better spacing on smaller screens */
 }
-.navbar-elements{
+
+/* Navbar Elements */
+.navbar-elements {
     padding: 1vw;
     font-weight: bold;
-    font-family: roboto;
+    font-family: Roboto, sans-serif;
     font-size: 2.7vh;
     text-decoration: none;
     list-style-type: none;
     color: white;
+    white-space: nowrap; /* Prevents text from wrapping to the next line */
 }
-.logo-image{
+
+/* Logo Image */
+.logo-image {
     height: 60px;
 }
-.navbar-list-container{
+
+/* Navbar List Container */
+.navbar-list-container {
     display: flex;
     flex-direction: row;
     padding-right: 4vw;
 }
-.login-button{
+
+/* Login Button */
+.login-button {
     background-color: transparent;
     border: none;
     color: white;
     font-weight: bold;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+    .navbar-elements {
+        font-size: 2.5vh; /* Slightly reduce font size on smaller screens */
+    }
+
+    .navbar-list-container {
+        padding-right: 0;
+        width: 100%;
+        justify-content: flex-end; /* Align buttons to the right */
+    }
+
+    .logo-image {
+        height: 50px; /* Adjust logo size for smaller screens */
+    }
+
+    .login-button {
+        font-size: 2.5vh; /* Slightly reduce button font size */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .Navbar-container {
+        padding: 3vw;
+    }
+
+    .navbar-elements {
+        font-size: 2.3vh; /* Further reduce font size on very small screens */
+    }
+
+    .logo-image {
+        height: 40px; /* Further adjust logo size */
+    }
+
+    .login-button {
+        font-size: 2.3vh; /* Further reduce button font size */
+    }
 }

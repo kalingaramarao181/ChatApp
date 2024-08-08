@@ -47,9 +47,6 @@ const Navbar = () => {
             ) : <Link to="/chat" className="navbar-elements">
             <button className="login-button" > Chat</button>
           </Link>}
-            <Link to="/Signin" className="navbar-elements">
-              <li>Signin</li>
-            </Link>
           </div>
         </ul>
       </div>

@@ -10,7 +10,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 router.post('/login', (req, res) => {
     const { email, password } = req.body;   
     const checkUserSql = 'SELECT * FROM userdata WHERE email = ?';
-
     db.query(checkUserSql, [email], async (err, data) => {
         if (err) {
             console.error('Error fetching user:', err);
