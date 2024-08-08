@@ -363,7 +363,8 @@ const Dashboard = () => {
                   <p className={eachMessage.senderid === senderData.id ? 'message-sender' : 'message-receiver'} onMouseEnter={() => setViewEdit(eachMessage.id)} onMouseLeave={() => setViewEdit(false)} key={index}>
                     <span className='message-span'>{eachMessage.message}</span>
                     <div className='message-time-container'>
-                      {viewEdit === eachMessage.id ? <button onClick={() => setEditBarView(eachMessage.id)} style={{ color: eachMessage.senderid === senderData.id ? 'white' : 'black' }} className='message-feature-button'><FaRegEdit /></button> : <p className='message-feature-empty-button'></p>}
+                      {viewEdit === eachMessage.id ? <button onClick={() => setEditBarView(eachMessage.id)} style={{ color: eachMessage.senderid === senderData.id ? 'white' : 'black' }} className='message-feature-button'><FaRegEdit /></button> : <p className='message-feature-empty-button'>
+                        </p>}
                       <span className='time-span'>{time}</span>
                     </div>
                   </p>

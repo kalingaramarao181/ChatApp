@@ -1,3 +1,4 @@
+/* General Styles */
 .sign-main-container {
   position: relative;
   height: 88vh;
@@ -19,63 +20,152 @@
   background-image: url("/public/images/5fz9SMYxWbv44jFVcD4vmd-1200-80.jpg");
   background-size: cover;
   background-position: center;
-  filter: blur(8px); /* Adjust the blur value as needed */
-  z-index: -1; /* Ensures the background stays behind the content */
+  filter: blur(8px);
+  z-index: -1;
 }
 
-/* Ensure that the content of the container is positioned above the blurred background */
 .sign-main-container > * {
   position: relative;
   z-index: 1;
 }
-  .sign-heading{
-    font-size: 35px;
-    font-family: roboto;
-    text-align: center;
-  }
 
+.sign-heading {
+  font-size: 35px;
+  font-family: roboto;
+  text-align: center;
+}
 
-  .sign-form-full-container{
-   width: 500px;
-   height: 620px;
-   box-shadow: 0 2px 8px 0 rgba(14, 13, 13, 0.678), 0 4px 20px 0 rgba(0, 0, 0, 0.603);
-   padding: 30px;
-   background-color: white;
-   border-radius: 10px;
+.sign-form-full-container {
+  width: 500px;
+  height: auto;
+  box-shadow: 0 2px 8px 0 rgba(14, 13, 13, 0.678), 0 4px 20px 0 rgba(0, 0, 0, 0.603);
+  padding: 30px;
+  background-color: white;
+  border-radius: 10px;
+}
 
-  }
-  .input-full-container{
-    display: flex;
+.input-full-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.signin-image {
+  height: 500px;
+  margin-top: 60px;
+}
+
+.sign-input-tag {
+  padding: 5px;
+  margin-top: 5px;
+  border-radius: 5px;
+
+}
+
+.sign-paragraph {
+  font-size: 18px;
+  margin-top: 5px;
+}
+
+.sign-input-tag-submit {
+  padding: 5px;
+  margin-top: 10px;
+  background-color: rgb(30, 66, 119);
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  border-radius: 2px;
+}
+
+.sign-input-tag-submit:hover {
+  background-color: rgb(209, 144, 4);
+}
+
+.keep-login {
+  align-self: flex-end;
+  font-weight: 600;
+  font-family: "Roboto";
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .sign-main-container {
     flex-direction: column;
+    align-items: center;
+    padding: 20px;
   }
-  .signin-image{
- height: 500px;
- margin-top: 60px;
+
+  .sign-form-full-container {
+    width: 80%;
+    margin-top: 20px;
   }
-  .sign-input-tag{
-    padding: 5px;
-    margin-top: 5px;
+
+  .signin-image {
+    height: 300px;
+    margin-top: 20px;
   }
-  .sign-paragraph{
+
+  .sign-heading {
+    font-size: 28px;
+  }
+
+  .sign-paragraph {
+    font-size: 16px;
+  }
+
+  .sign-input-tag-submit {
     font-size: 18px;
-    margin-top: 5px;
   }
-  .sign-input-tag-submit{
+}
+
+@media (max-width: 768px) {
+  .sign-main-container {
+    padding: 10px;
+  }
+
+  .sign-form-full-container {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .signin-image {
+    display: none;
+  }
+
+  .sign-heading {
+    font-size: 24px;
+  }
+
+  .sign-paragraph {
+    font-size: 15px;
+  }
+
+  .sign-input-tag-submit {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sign-main-container {
     padding: 5px;
-    margin-top: 10px;
-    background-color: rgb(30, 66, 119);
-    color: white;
+  }
+
+  .sign-form-full-container {
+    width: 95%;
+    padding: 10px;
+    box-shadow: none;
+  }
+
+  .sign-heading {
     font-size: 20px;
-    font-weight: bold;
-
   }
-  .sign-input-tag-submit:hover{
 
-    background-color: rgb(209, 144, 4);
+  .sign-paragraph {
+    font-size: 14px;
+  }
 
+  .sign-input-tag-submit {
+    font-size: 14px;
+    padding: 8px;
   }
-  .keep-login{
-    align-self: flex-end;
-    font-weight: 600;
-    font-family: "Roboto";
-  }
+}

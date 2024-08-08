@@ -3,6 +3,7 @@ import axios from "axios";
 import { baseUrl } from "../config";
 import Cookies from "js-cookie";
 import './index.css'
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const Login = (props) => {
 
@@ -48,7 +49,7 @@ const Login = (props) => {
               <label className="login-paragraph">Password</label>
               <input type="password" className="login-input-tag" name="password" value={password} onChange={onChangeHandler} placeholder="Enter Your Password" required/>
               <input type="submit" className="login-input-tag-submit" />
-              <p className="keep-login"><a href="/signup">Register</a> If not User</p>
+              <p className="keep-login"><Link to="/signup">Register</Link> If not User</p>
           </form>
         </div>
         <div>
