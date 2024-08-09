@@ -14,6 +14,7 @@
   align-self: flex-end;
   font-weight: 600;
   font-family: "Roboto";
+  margin-top: 1vh;
 }
 
 .login-main-container::before {
@@ -38,7 +39,7 @@
 
 .login-form-full-container {
   width: 500px;
-  height: auto;
+  height: 48vh;
   box-shadow: 0 2px 8px 0 rgba(14, 13, 13, 0.678), 0 4px 20px 0 rgba(0, 0, 0, 0.603);
   padding: 30px;
   background-color: white;
@@ -80,6 +81,9 @@
 
 .login-input-tag-submit:hover {
   background-color: rgb(209, 144, 4);
+}
+.forget-password{
+  color: rgb(10, 97, 228);
 }
 
 /* Responsive Styles */

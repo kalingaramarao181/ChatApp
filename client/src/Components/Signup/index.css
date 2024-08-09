@@ -1,7 +1,6 @@
 /* General Styles */
 .sign-main-container {
   position: relative;
-  height: 88vh;
   width: 100vw;
   overflow: hidden;
   display: flex;
@@ -35,9 +34,18 @@
   text-align: center;
 }
 
+.otp-input{
+  width: 50px;
+  height: 50px;
+  font-Size: 24px;
+  text-align: center;
+  margin-right: 10px;
+  border: 1px solid;
+  border-radius: 5px;
+}
+
 .sign-form-full-container {
   width: 500px;
-  height: auto;
   box-shadow: 0 2px 8px 0 rgba(14, 13, 13, 0.678), 0 4px 20px 0 rgba(0, 0, 0, 0.603);
   padding: 30px;
   background-color: white;
@@ -85,6 +93,14 @@
   align-self: flex-end;
   font-weight: 600;
   font-family: "Roboto";
+}
+.otp-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1vh;
+  
 }
 
 /* Responsive Styles */
@@ -167,5 +183,24 @@
   .sign-input-tag-submit {
     font-size: 14px;
     padding: 8px;
+    height: 45px;
+    border: none;
+  }
+  .otp-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 2vh;
+
+  }
+  .otp-input{
+    width: 50px;
+    height: 50px;
+    font-Size: 24px;
+    text-align: center;
+    margin-right: 10px;
+    border: 1px solid;
+    border-radius: 5px;
   }
 }

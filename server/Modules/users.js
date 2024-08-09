@@ -128,6 +128,33 @@ router.put('/users/:id', (req, res) => {
     });
 });
 
+// Update an existing user password
+router.put('/update-password', async (req, res) => {
+    const { email, password } = req.body; // Example fields
+
+    console.log('Email:', email);
+    console.log('Password:', password);
+
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+    }
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const sql = 'UPDATE userdata SET password = ? WHERE email = ?';
+        db.query(sql, [hashedPassword, email], (err, result) => {
+            if (err) {
+                console.error('Error updating user:', err);
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                res.json({ message: 'Password updated successfully' });
+            }
+        });
+    } catch (error) {
+        console.error('Error hashing password:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 router.put('/update-logout/:id', (req, res) => {
     const { id } = req.params;
     const date = new Date()
