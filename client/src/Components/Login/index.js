@@ -157,13 +157,11 @@ const Login = (props) => {
             <p className="keep-login"><span onClick={() => setPaswordUpedatedView(true)} className="forget-password">Forget Password</span> Or <Link to="/signup">Register</Link> If not User</p>
           </form>
         </div>}
-      <div>
         <img
           src="images\Cyber-Security.png"
           alt="signin-img"
           className="login-image"
         />
-      </div>
     </div>
   );
 };

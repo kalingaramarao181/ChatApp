@@ -79,20 +79,20 @@
 }
 
 .signin-icon {
-    font-size: 6vw;
+    font-size: 3vw;
     color: rgb(187, 100, 1);
 }
 
 .home-signin-heading {
-    font-size: 6vw;
+    font-size: 3vw;
     font-family: roboto;
     font-weight: bold;
 }
 
 .home-signin-button {
-    width: 80%;
-    padding: 10px;
-    font-size: 4vw;
+    width: 20vw;
+    height: 5vh;
+    font-size: 1.5vw;
     font-weight: bold;
     background-color: rgb(187, 100, 1);
     border: none;

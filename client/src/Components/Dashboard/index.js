@@ -10,6 +10,8 @@ import { IoIosShareAlt } from "react-icons/io";
 import { IoPersonAddOutline } from "react-icons/io5";
 import { FiArrowLeftCircle } from "react-icons/fi";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { IoCheckmarkDone } from "react-icons/io5";
+import { IoCheckmarkOutline } from "react-icons/io5";
 
 const Dashboard = () => {
   const senderData = JSON.parse(localStorage.getItem('senderData')) || { id: 1, fullname: 'John Doe' };
@@ -64,23 +66,19 @@ const Dashboard = () => {
     }
   }, [message.senderid, message.receiverid]);
 
-  const handleMessageChange = (e) => {
-    setMessage({ ...message, message: e.target.value });
-  };
 
-  const handleEditMessageChange = (e) => {
-    setEditMessage({ ...editMessage, message: e.target.value })
-  }
-
-  const handleEditMessageSend = () => {
-    axios.put(`${baseUrl}message/${editMessage.messageId}`, { message: editMessage.message })
-      .then((res) => {
-        setEditMessage(prevMessage => ({ ...prevMessage, message: '' })); // Clear the input after sending
-        window.location.reload()
-      })
-      .catch(err => {
-        console.log('Error sending message:', err.response ? err.response.data : err.message);
-      });
+  const handleEditMessageSend = (e) => {
+    e.preventDefault()
+    if (editMessage.message !== "") {
+      axios.put(`${baseUrl}message/${editMessage.messageId}`, { message: editMessage.message })
+        .then((res) => {
+          setEditMessage(prevMessage => ({ ...prevMessage, message: '' })); // Clear the input after sending
+          window.location.reload()
+        })
+        .catch(err => {
+          console.log('Error sending message:', err.response ? err.response.data : err.message);
+        });
+    }
 
   }
 
@@ -91,15 +89,18 @@ const Dashboard = () => {
     }));
   };
 
-  const handleClickSend = () => {
-    axios.post(`${baseUrl}send-message`, message)
-      .then((res) => {
-        setChat([...chat, { ...message }]); // Update chat with new message
-        setMessage(prevMessage => ({ ...prevMessage, message: '' })); // Clear the input after sending
-      })
-      .catch(err => {
-        console.log('Error sending message:', err.response ? err.response.data : err.message);
-      });
+  const handleClickSend = (e) => {
+    e.preventDefault()
+    if (message.message !== "") {
+      axios.post(`${baseUrl}send-message`, message)
+        .then((res) => {
+          setChat([...chat, { ...message }]); // Update chat with new message
+          setMessage(prevMessage => ({ ...prevMessage, message: '' })); // Clear the input after sending
+        })
+        .catch(err => {
+          console.log('Error sending message:', err.response ? err.response.data : err.message);
+        });
+    }
   };
 
   const handleMessageEdit = (messageId, message) => {
@@ -137,7 +138,8 @@ const Dashboard = () => {
   }
 
   const handleMessageDelete = (messageId) => {
-    axios.delete(`${baseUrl}message/${messageId}`)
+    axios.post(`${baseUrl}delete-message`, { messageId, userId: senderData.id })
+      // axios.delete(`${baseUrl}message/${messageId}`)
       .then((res) => {
         setEditBarView(false)
         window.location.reload()
@@ -223,12 +225,13 @@ const Dashboard = () => {
     return (
       <div className='dashboard-sidebar-main-container'>
         <div className='sidebar-profile-container'>
-          <button onClick={() => setUsersView(false)} className='back-button'><FiArrowLeftCircle /></button>
+          <button type="button" onClick={() => setUsersView(false)} className='back-button'><FiArrowLeftCircle /></button>
           <input onChange={(e) => setSearchValue(e.target.value)} type='search' className='search-input' placeholder='Search Users' />
         </div>
         <div className='chatted-users-container'>
           {searchUsersData.map(eachUser => (
             <button
+              type="button"
               key={eachUser.id}
               onClick={() => handleClickSelectUser(eachUser.id, eachUser)}
               className={eachUser.id === message.receiverid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
@@ -249,12 +252,13 @@ const Dashboard = () => {
       <div className='dashboard-sidebar-main-container'>
         <div className='sidebar-profile-container'>
           <h1 className='sidebar-profile-heading'>{senderData.fullname}</h1>
-          <button onClick={() => setUsersView(true)} className='sidebar-profile-icon'><IoPersonAddOutline /></button>
+          <button type="button" onClick={() => setUsersView(true)} className='sidebar-profile-icon'><IoPersonAddOutline /></button>
         </div>
         <div className='chatted-users-container'>
           {chatUsersData.map(eachUser => {
             return (
               <><button
+                type="button"
                 key={eachUser.id}
                 onClick={() => handleClickSendUser(eachUser.id, eachUser)}
                 className={eachUser.id === message.receiverid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
@@ -263,7 +267,7 @@ const Dashboard = () => {
                   {eachUser.fullname.split(" ").length >= 1
                     ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0]
                     : eachUser.fullname[0]}
-                  {eachUser.loginstatus === 1 && <span className="status-dot"></span>}
+                  {eachUser.loginstatus && <span className="status-dot"></span>}
                 </p>
                 <h1 className='sidebar-profile-heading'>{eachUser.fullname}</h1>
                 {unreadCounts[eachUser.id] !== 0 && <span className='unread-count'>{unreadCounts[eachUser.id]}</span>}
@@ -281,11 +285,11 @@ const Dashboard = () => {
       <div className='dashboard-input-elements-container-select-stage'>
         <p className='selected-items'>Selected {selectedIds.length}</p>
         <div className='share-delete-container'>
-          <button className='dashboard-button' onClick={onClickDeleteSelected}>
+          <button type="button" className='dashboard-button' onClick={onClickDeleteSelected}>
             <MdDelete className='dashboard-text-emoji-container-send' />
           </button>
 
-          <button className='dashboard-button'>
+          <button type="button" className='dashboard-button'>
             <IoIosShareAlt className='dashboard-text-emoji-container-send' />
           </button>
         </div>
@@ -295,11 +299,11 @@ const Dashboard = () => {
   const messageFeatures = (eachMessage) => {
     return (
       <div className='edit-bar-container' style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
-        {eachMessage.senderid === senderData.id && <button onClick={() => handleMessageEdit(eachMessage.id, eachMessage.message)} className='edit-bar-button'>Edit</button>}
-        <button onClick={() => handleMessageSelect(eachMessage.id)} className='edit-bar-button'>Select</button>
-        <button onClick={() => handleMessageDelete(eachMessage.id)} className='edit-bar-button'>Delete</button>
+        {eachMessage.senderid === senderData.id && <button type="button" onClick={() => handleMessageEdit(eachMessage.id, eachMessage.message)} className='edit-bar-button'>Edit</button>}
+        <button type="button" onClick={() => handleMessageSelect(eachMessage.id)} className='edit-bar-button'>Select</button>
+        <button type="button" onClick={() => handleMessageDelete(eachMessage.id)} className='edit-bar-button'>Delete</button>
         <CopyToClipboard text={eachMessage.message}>
-          <button onClick={() => alert('Text copied!')} className='edit-bar-button'>Copy</button>
+          <button type="button" onClick={() => alert('Text copied!')} className='edit-bar-button'>Copy</button>
         </CopyToClipboard>
       </div>
     )
@@ -307,35 +311,35 @@ const Dashboard = () => {
 
   const inputBarEditView = () => {
     return (
-      <div className='dashboard-input-elements-container'>
+      <form onSubmit={handleEditMessageSend} className='dashboard-input-elements-container'>
         <input
           type='text'
           placeholder='Type your message...'
           value={editMessage.message}
           className='dashboard-input-text'
-          onChange={handleEditMessageChange}
+          onChange={(e) => setEditMessage({ ...editMessage, message: e.target.value })}
         />
-        <button className='dashboard-button' onClick={handleEditMessageSend}>
+        <button type="submit" className='dashboard-button'>
           <BsFillSendFill className='dashboard-text-emoji-container-send' />
         </button>
-      </div>
+      </form>
     )
   }
 
   const inputBarMessageView = () => {
     return (
-      <div className='dashboard-input-elements-container'>
+      <form onSubmit={handleClickSend} className='dashboard-input-elements-container'>
         <input
           type='text'
           placeholder='Type your message...'
           value={message.message}
           className='dashboard-input-text'
-          onChange={handleMessageChange}
+          onChange={(e) => setMessage({ ...message, message: e.target.value })}
         />
-        <button className='dashboard-button' onClick={handleClickSend}>
+        <button type='submit' className='dashboard-button' >
           <BsFillSendFill className='dashboard-text-emoji-container-send' />
         </button>
-      </div>
+      </form>
     )
   }
 
@@ -343,18 +347,22 @@ const Dashboard = () => {
 
 
 
-
+  const filteredMessages = chat.filter(
+    message =>
+      !(message.senderid === senderData.id && message.deleted_by_sender) &&
+      !(message.receiverid === senderData.id && message.deleted_by_receiver)
+  );
 
   return (
     <div className='dashboard-total-container'>
       {usersView ? allUsers() : chattedUsers()}
       <div className='dashboard-chat-container'>
-          <h1 className='name-search'>{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
-            {chattingUser.fullname && chattingUser.loginstatus ? <span className='last-seen-online'> Online</span> : <span className='last-seen'> Last seen at {chattingUser.lastseen ? formatAMPM(new Date(chattingUser.lastseen)) : chatUsersData.length >= 1 && formatAMPM(new Date(chatUsersData[0].lastseen))}</span>}
-          </h1>
+        <h1 className='name-search'>{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
+          {chattingUser.fullname && chattingUser.loginstatus ? <span className='last-seen-online'> Online</span> : <span className='last-seen'> Last seen at {chattingUser.lastseen ? formatAMPM(new Date(chattingUser.lastseen)) : chatUsersData.length >= 1 && formatAMPM(new Date(chatUsersData[0].lastseen))}</span>}
+        </h1>
         <div className='chat-container'>
           <div className='dashboard-chat-box-container'>
-            {chat.map((eachMessage, index) => {
+            {filteredMessages.map((eachMessage, index) => {
               const timeStamp = new Date(eachMessage.timestamp)
               const time = formatAMPM(timeStamp)
               return <>
@@ -363,9 +371,9 @@ const Dashboard = () => {
                   <p className={eachMessage.senderid === senderData.id ? 'message-sender' : 'message-receiver'} onMouseEnter={() => setViewEdit(eachMessage.id)} onMouseLeave={() => setViewEdit(false)} key={index}>
                     <span className='message-span'>{eachMessage.message}</span>
                     <div className='message-time-container'>
-                      {viewEdit === eachMessage.id ? <button onClick={() => setEditBarView(eachMessage.id)} style={{ color: eachMessage.senderid === senderData.id ? 'white' : 'black' }} className='message-feature-button'><FaRegEdit /></button> : <p className='message-feature-empty-button'>
-                        </p>}
-                      <span className='time-span'>{time}</span>
+                      {viewEdit === eachMessage.id ? <button type="button" onClick={() => setEditBarView((prev) => (prev === eachMessage.id ? false : eachMessage.id))} style={{ color: eachMessage.senderid === senderData.id ? 'white' : 'black' }} className='message-feature-button'><FaRegEdit /></button> : <p className='message-feature-empty-button'>
+                      </p>}
+                      <span className='time-span'>{time}{eachMessage.senderid === senderData.id && (eachMessage.read ? <IoCheckmarkDone className='double-tik-blue' /> : chattingUser.loginstatus ? <IoCheckmarkDone className='double-tik' /> : <IoCheckmarkOutline className='single-tik' />)}</span>
                     </div>
                   </p>
                 </div>
@@ -381,7 +389,7 @@ const Dashboard = () => {
         <div className='dashboard-chat-main-container'>
           {selectInput ? inputBarSelectedFeaturesView() : isSelectMessageEdit ? inputBarEditView() : inputBarMessageView()
           }
-          <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className='dashboard-text-emoji-button'>😀</button>
+          <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)} className='dashboard-text-emoji-button'>😀</button>
         </div>
       </div>
     </div>

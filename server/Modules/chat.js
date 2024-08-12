@@ -22,6 +22,25 @@ router.get('/messages/:senderid/:receiverid', (req, res) => {
     });
 });
 
+router.post('/delete-message', (req, res) => {
+    const { messageId, userId } = req.body;
+  
+    // Query to identify the sender or receiver
+    const query = `
+      UPDATE messages 
+      SET deleted_by_sender = IF(senderid = ?, TRUE, deleted_by_sender),
+          deleted_by_receiver = IF(receiverid = ?, TRUE, deleted_by_receiver)
+      WHERE id = ? AND (senderid = ? OR receiverid = ?)
+    `;
+  
+    db.query(query, [userId, userId, messageId, userId, userId], (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to delete message' });
+      }
+      res.status(200).json({ message: 'Message deleted successfully' });
+    });
+  });
+
 router.put("/message/:messageId", (req, res) => {
     const {messageId} = req.params;
     const {message} = req.body

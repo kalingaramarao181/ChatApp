@@ -52,9 +52,6 @@
   flex-direction: column;
 }
 
-.login-image {
-  height: 500px;
-}
 
 .login-input-tag {
   padding: 5px;
@@ -84,6 +81,7 @@
 }
 .forget-password{
   color: rgb(10, 97, 228);
+  cursor: pointer;
 }
 
 /* Responsive Styles */
@@ -167,4 +165,5 @@
     font-size: 14px;
     padding: 8px;
   }
+  
 }
