@@ -12,6 +12,7 @@ import { FiArrowLeftCircle } from "react-icons/fi";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { IoCheckmarkDone } from "react-icons/io5";
 import { IoCheckmarkOutline } from "react-icons/io5";
+import { formatAMPM } from '../Functions/formatAMPM';
 
 const Dashboard = () => {
   const senderData = JSON.parse(localStorage.getItem('senderData')) || { id: 1, fullname: 'John Doe' };
@@ -32,6 +33,26 @@ const Dashboard = () => {
   const [searchValue, setSearchValue] = useState("")
   const chatEndRef = useRef(null);
 
+
+  // Function to fetch messages
+  const fetchMessages = () => {
+    if (message.receiverid) {
+      axios.get(`${baseUrl}messages/${message.senderid}/${message.receiverid}`)
+        .then((res) => {
+          setChat(res.data);
+        })
+        .catch((err) => {
+          console.log('Error fetching messages:', err);
+        });
+    }
+  };
+
+  // Fetch messages initially and set up polling
+  useEffect(() => {
+    fetchMessages();
+    const intervalId = setInterval(fetchMessages, 5000); // Poll every 5 seconds
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, [message.senderid, message.receiverid]);
 
   useEffect(() => {
     axios.get(`${baseUrl}chatted-users/${senderData.id}`)
@@ -54,35 +75,21 @@ const Dashboard = () => {
       });
   }, [senderData.id]);
 
-  useEffect(() => {
-    if (message.receiverid) {
-      axios.get(`${baseUrl}messages/${message.senderid}/${message.receiverid}`)
-        .then((res) => {
-          setChat(res.data);
-        })
-        .catch((err) => {
-          console.log('Error fetching messages:', err);
-        });
-    }
-  }, [message.senderid, message.receiverid]);
-
-
   const handleEditMessageSend = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (editMessage.message !== "") {
       axios.put(`${baseUrl}message/${editMessage.messageId}`, { message: editMessage.message })
         .then((res) => {
-          setEditMessage(prevMessage => ({ ...prevMessage, message: '' })); // Clear the input after sending
-          window.location.reload()
+          setEditMessage(prevMessage => ({ ...prevMessage, message: '' })); 
+          fetchMessages(); // Fetch updated messages after editing
         })
         .catch(err => {
           console.log('Error sending message:', err.response ? err.response.data : err.message);
         });
     }
+  };
 
-  }
-
-  const onEmojiClick = (event, emojiObject) => {
+  const onEmojiClick = (emojiObject) => {
     setMessage(prevMessage => ({
       ...prevMessage,
       message: prevMessage.message + emojiObject.emoji
@@ -90,12 +97,13 @@ const Dashboard = () => {
   };
 
   const handleClickSend = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (message.message !== "") {
       axios.post(`${baseUrl}send-message`, message)
         .then((res) => {
-          setChat([...chat, { ...message }]); // Update chat with new message
-          setMessage(prevMessage => ({ ...prevMessage, message: '' })); // Clear the input after sending
+          setChat([...chat, { ...message }]);
+          setMessage(prevMessage => ({ ...prevMessage, message: '' }));
+          fetchMessages(); // Fetch updated messages after sending
         })
         .catch(err => {
           console.log('Error sending message:', err.response ? err.response.data : err.message);
@@ -104,99 +112,82 @@ const Dashboard = () => {
   };
 
   const handleMessageEdit = (messageId, message) => {
-    setEditMessage({ ...editMessage, messageId, message })
-    setIsSelectMessageEdit(true)
-    setEditBarView(false)
-  }
+    setEditMessage({ ...editMessage, messageId, message });
+    setIsSelectMessageEdit(true);
+    setEditBarView(false);
+  };
 
   const handleMessageSelect = (messageId) => {
-    setSelectInput(true)
-    setEditBarView(false)
-
-  }
+    setSelectInput(true);
+    setEditBarView(false);
+  };
 
   const onSelectMessage = (e) => {
-
     if (e.target.checked && e.target.id) {
       setSelectedIds(prevSelectedIds => [...prevSelectedIds, e.target.id]);
     } else if (!e.target.checked && e.target.id) {
       setSelectedIds(prevSelectedIds => prevSelectedIds.filter(id => id !== e.target.id));
     }
-  }
+  };
 
   const onClickDeleteSelected = () => {
     const selectedIdsString = selectedIds.join(",");
-
-    axios.delete(`${baseUrl}selected-messages/${selectedIdsString}`)
+      axios.post(`${baseUrl}delete-selected-messages`, { selectedIdsString, userId: senderData.id })
       .then((res) => {
-        console.log(res.data);
-        window.location.reload();
+        fetchMessages();
       })
       .catch(err => {
-        console.error('Error deleting messages:', err.response ? err.response.data : err.message);  // Log error
+        console.log('Error deleting messageS:', err.response ? err.response.data : err.message);
       });
-  }
+  };
 
   const handleMessageDelete = (messageId) => {
     axios.post(`${baseUrl}delete-message`, { messageId, userId: senderData.id })
-      // axios.delete(`${baseUrl}message/${messageId}`)
       .then((res) => {
-        setEditBarView(false)
-        window.location.reload()
+        setEditBarView(false);
+        fetchMessages(); // Fetch updated messages after deletion
       })
       .catch(err => {
         console.log('Error deleting message:', err.response ? err.response.data : err.message);
       });
-
-  }
+  };
 
   const fetchUnreadMessages = async (receiverid) => {
     try {
       const res = await axios.get(`${baseUrl}messages/${message.senderid}/${receiverid}`);
       const unreadMessages = res.data.filter(eachMessage => eachMessage.senderid === receiverid && !eachMessage.read);
-      return unreadMessages.map(msg => msg.id); // Return the ids of unread messages
+      return unreadMessages.map(msg => msg.id);
     } catch (err) {
       console.log('Error fetching messages:', err);
       return [];
     }
   };
 
-  const handleClickSendUser = async (id, user) => {
+  const handleClickChattedUser = async (id, user) => {
     setMessage(prevMessage => ({ ...prevMessage, receiverid: id }));
     setChattingUser(user);
     const unreadMessageIds = await fetchUnreadMessages(id);
-
     if (unreadMessageIds.length > 0) {
       axios.put(`${baseUrl}read-message`, { messageIds: unreadMessageIds })
         .then(res => {
           console.log('Messages marked as read:', res.data);
-          fetchUnreadCounts(); // Update unread counts
+          fetchUnreadCounts(); 
         })
         .catch(err => {
           console.log('Error marking messages as read:', err);
         });
     }
-    setSelectInput(false)
+    setSelectInput(false);
   };
 
   const handleClickSelectUser = (id, user) => {
     const isPresent = chatUsersData.some(obj => obj.id === user.id);
-    setChatUsersData(!isPresent ? [...chatUsersData, user] : [...chatUsersData])
+    setChatUsersData(!isPresent ? [...chatUsersData, user] : [...chatUsersData]);
     setMessage(prevMessage => ({ ...prevMessage, receiverid: id }));
     setChattingUser(user);
-    setUsersView(false)
+    setUsersView(false);
   };
 
-  function formatAMPM(date) {
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? 'pm' : 'am';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    var strTime = hours + ':' + minutes + ' ' + ampm;
-    return strTime;
-  }
 
   const fetchUnreadCounts = () => {
     chatUsersData.forEach((user) => {
@@ -215,7 +206,11 @@ const Dashboard = () => {
     if (chatUsersData.length > 0) {
       fetchUnreadCounts();
     }
-  }, [chatUsersData,]);
+  }, [chatUsersData, message.senderid]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chat]);
 
 
   const searchUsersData = usersData.filter(eachUser => eachUser.fullname.trim().toLocaleLowerCase().includes(searchValue.toLocaleLowerCase()) && eachUser.id !== senderData.id)
@@ -260,11 +255,11 @@ const Dashboard = () => {
               <><button
                 type="button"
                 key={eachUser.id}
-                onClick={() => handleClickSendUser(eachUser.id, eachUser)}
+                onClick={() => handleClickChattedUser(eachUser.id, eachUser)}
                 className={eachUser.id === message.receiverid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
               >
                 <p className="sidebar-profile-icon">
-                  {eachUser.fullname.split(" ").length >= 1
+                  {eachUser.fullname.split(" ").length > 1
                     ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0]
                     : eachUser.fullname[0]}
                   {eachUser.loginstatus && <span className="status-dot"></span>}

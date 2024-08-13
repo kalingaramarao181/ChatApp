@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-// Login route
+//LOGIN ROUTE
 router.post('/login', (req, res) => {
     const { email, password } = req.body;   
     const checkUserSql = 'SELECT * FROM userdata WHERE email = ?';

@@ -8,7 +8,7 @@ const genarateUniqueId = () => {
     return uuidv4()
 }
 
-// Get all users
+//GET ALL USERS
 router.get('/users', (req, res) => {
     const sql = 'SELECT * FROM userdata';
     db.query(sql, (err, data) => {
@@ -21,7 +21,7 @@ router.get('/users', (req, res) => {
     });
 });
 
-// Get a single user by ID
+//GET A SINGLE USER BY ID
 router.get('/users/:id', (req, res) => {
     const { id } = req.params;
     const sql = 'SELECT * FROM userdata WHERE id = ?';
@@ -35,7 +35,7 @@ router.get('/users/:id', (req, res) => {
     });
 });
 
-//Get chatted users
+//GET CHATTED USERS
 router.get('/chatted-users/:senderid', (req, res) => {
     const { senderid } = req.params;
     const sql = `
@@ -73,7 +73,7 @@ router.get('/chatted-users/:senderid', (req, res) => {
     });
 });
 
-// Create a new user
+//CREATE NEW USER
 router.post('/signup-user', async (req, res) => {
     const { fullname, email, password, phoneno, dateofbirth, address } = req.body;
     const userid = genarateUniqueId();
@@ -113,7 +113,7 @@ router.post('/signup-user', async (req, res) => {
 
 
 
-// Update an existing user
+// UPDATE EXISTING USER
 router.put('/users/:id', (req, res) => {
     const { id } = req.params;
     const { fullname, email, password, phoneno, dateofbirth, address } = req.body; // Example fields
@@ -128,7 +128,7 @@ router.put('/users/:id', (req, res) => {
     });
 });
 
-// Update an existing user password
+// UPDATING AN EXISTING USER PASSWORD
 router.put('/update-password', async (req, res) => {
     const { email, password } = req.body; // Example fields
 
@@ -155,6 +155,7 @@ router.put('/update-password', async (req, res) => {
     }
 });
 
+//UPDATE LOGOUT STATUS
 router.put('/update-logout/:id', (req, res) => {
     const { id } = req.params;
     const date = new Date()
