@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import EmojiPicker from 'emoji-picker-react';
 import { BsFillSendFill } from 'react-icons/bs';
-import axios from 'axios';
-import { baseUrl } from '../config'; // Ensure you have your baseUrl defined in the config file
-import './index.css';  // Assuming you have your styles here
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { IoIosShareAlt } from "react-icons/io";
@@ -13,6 +11,8 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { IoCheckmarkDone } from "react-icons/io5";
 import { IoCheckmarkOutline } from "react-icons/io5";
 import { formatAMPM } from '../Functions/formatAMPM';
+import { baseUrl } from '../config'; 
+import './index.css'; 
 
 const Dashboard = () => {
   const senderData = JSON.parse(localStorage.getItem('senderData')) || { id: 1, fullname: 'John Doe' };
@@ -31,6 +31,8 @@ const Dashboard = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isSelectMessageEdit, setIsSelectMessageEdit] = useState(false)
   const [searchValue, setSearchValue] = useState("")
+  const [showKeyboard, setShowKeyboard] = useState("")
+
   const chatEndRef = useRef(null);
 
 
@@ -247,7 +249,7 @@ const Dashboard = () => {
       <div className='dashboard-sidebar-main-container'>
         <div className='sidebar-profile-container'>
           <h1 className='sidebar-profile-heading'>{senderData.fullname}</h1>
-          <button type="button" onClick={() => setUsersView(true)} className='sidebar-profile-icon'><IoPersonAddOutline /></button>
+          <button type="button" onClick={() => setUsersView(true)} style={{marginTop:'0px'}} className='sidebar-profile-icon'><IoPersonAddOutline /></button>
         </div>
         <div className='chatted-users-container'>
           {chatUsersData.map(eachUser => {
@@ -308,6 +310,7 @@ const Dashboard = () => {
     return (
       <form onSubmit={handleEditMessageSend} className='dashboard-input-elements-container'>
         <input
+        onClick={() => setShowKeyboard(true)}
           type='text'
           placeholder='Type your message...'
           value={editMessage.message}
@@ -325,6 +328,7 @@ const Dashboard = () => {
     return (
       <form onSubmit={handleClickSend} className='dashboard-input-elements-container'>
         <input
+        onClick={() => setShowKeyboard(true)}
           type='text'
           placeholder='Type your message...'
           value={message.message}
@@ -366,8 +370,8 @@ const Dashboard = () => {
                   <p className={eachMessage.senderid === senderData.id ? 'message-sender' : 'message-receiver'} onMouseEnter={() => setViewEdit(eachMessage.id)} onMouseLeave={() => setViewEdit(false)} key={index}>
                     <span className='message-span'>{eachMessage.message}</span>
                     <div className='message-time-container'>
-                      {viewEdit === eachMessage.id ? <button type="button" onClick={() => setEditBarView((prev) => (prev === eachMessage.id ? false : eachMessage.id))} style={{ color: eachMessage.senderid === senderData.id ? 'white' : 'black' }} className='message-feature-button'><FaRegEdit /></button> : <p className='message-feature-empty-button'>
-                      </p>}
+                      {viewEdit === eachMessage.id ? <button type="button" onClick={() => setEditBarView((prev) => (prev === eachMessage.id ? false : eachMessage.id))} style={{ color: eachMessage.senderid === senderData.id ? 'white' : 'black' }} className='message-feature-button'><FaRegEdit /></button> : 
+                      <p className='message-feature-empty-button'></p>}
                       <span className='time-span'>{time}{eachMessage.senderid === senderData.id && (eachMessage.read ? <IoCheckmarkDone className='double-tik-blue' /> : chattingUser.loginstatus ? <IoCheckmarkDone className='double-tik' /> : <IoCheckmarkOutline className='single-tik' />)}</span>
                     </div>
                   </p>
@@ -380,6 +384,8 @@ const Dashboard = () => {
 
           </div>
           {showEmojiPicker && <EmojiPicker className='emoji-input' onEmojiClick={onEmojiClick} />}
+          {showKeyboard && <div className='keyboard-input' onEmojiClick={onEmojiClick}>keyBoard </div>}
+
         </div>
         <div className='dashboard-chat-main-container'>
           {selectInput ? inputBarSelectedFeaturesView() : isSelectMessageEdit ? inputBarEditView() : inputBarMessageView()
