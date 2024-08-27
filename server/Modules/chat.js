@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./connection');
+const db = require('../Config/connection');
+const upload = require('../Config/multer'); // Import multer middleware
 
 //GET MESSAGES USING USER_ID AND RECEIVER_ID
 router.get('/messages/:senderid/:receiverid', (req, res) => {
@@ -22,10 +23,22 @@ router.get('/messages/:senderid/:receiverid', (req, res) => {
 });
 
 //SEND MESSAGE TO DATABASE
-router.post('/send-message', (req, res) => {
+router.post('/send-message', upload.single('file'), (req, res) => {
     const { senderid, receiverid, message } = req.body;
-    const query = 'INSERT INTO messages (senderid, receiverid, message) VALUES (?, ?, ?)';
-    db.query(query, [senderid, receiverid, message], (err, result) => {
+    const file = req.file; // Access uploaded file
+
+    // Use a single query string
+    const query = 'INSERT INTO messages (senderid, receiverid, message, file) VALUES (?, ?, ?, ?)';
+
+    // If no file is uploaded, use NULL for the file field
+    const values = [
+        senderid,
+        receiverid,
+        message,
+        file ? file.path : null
+    ];
+
+    db.query(query, values, (err, result) => {
         if (err) {
             console.error('Error inserting message:', err);
             return res.status(500).send('Internal server error');
@@ -37,7 +50,6 @@ router.post('/send-message', (req, res) => {
 //DELETE USER MESSAGE
 router.post('/delete-message', (req, res) => {
     const { messageId, userId } = req.body;
-    // Query to identify the sender or receiver
     const query = `
       UPDATE messages 
       SET deleted_by_sender = IF(senderid = ?, TRUE, deleted_by_sender),
@@ -83,16 +95,16 @@ router.post('/delete-selected-messages', (req, res) => {
 //EDIT MESSAGE
 router.put("/message/:messageId", (req, res) => {
     const { messageId } = req.params;
-    const { message } = req.body
-    const query = `UPDATE messages SET message = ? WHERE id = ?`
+    const { message } = req.body;
+    const query = `UPDATE messages SET message = ? WHERE id = ?`;
     db.query(query, [message, messageId], (err, result) => {
         if (err) {
-            console.error('Error ediding message:', err);
+            console.error('Error editing message:', err);
             return res.status(500).send('Internal server error');
         }
         res.status(200).send('Message updated');
-    })
-})
+    });
+});
 
 //UPDATE READ MESSAGE
 router.put("/read-message", (req, res) => {
@@ -118,20 +130,20 @@ router.put("/read-message", (req, res) => {
     });
 });
 
-//DELETE MESSAGE (NOT IN USESAGE)
+//DELETE MESSAGE (NOT IN USE)
 router.delete("/message/:messageId", (req, res) => {
     const { messageId } = req.params;
-    const query = `DELETE FROM messages WHERE id = ?`
-    db.query(query, [messageId], (err, ressult) => {
+    const query = `DELETE FROM messages WHERE id = ?`;
+    db.query(query, [messageId], (err, result) => {
         if (err) {
             console.error('Error Deleting message:', err);
             return res.status(500).send('Internal server error');
         }
         res.status(200).send('Message Deleted');
-    })
-})
+    });
+});
 
-//DELETE SELECTED MESSAGES (NOT IN USESAGE)
+//DELETE SELECTED MESSAGES (NOT IN USE)
 router.delete('/selected-messages/:selectedIdsString', (req, res) => {
     const { selectedIdsString } = req.params;
     const ids = selectedIdsString.split(',').map(id => parseInt(id, 10));
@@ -152,6 +164,5 @@ router.delete('/selected-messages/:selectedIdsString', (req, res) => {
         res.status(200).send('Messages Deleted');
     });
 });
-
 
 module.exports = router;

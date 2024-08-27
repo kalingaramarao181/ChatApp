@@ -10,13 +10,20 @@ import { FiArrowLeftCircle } from "react-icons/fi";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { IoCheckmarkDone } from "react-icons/io5";
 import { IoCheckmarkOutline } from "react-icons/io5";
+import { FaCaretSquareDown } from "react-icons/fa";
+import { FaCaretSquareUp } from "react-icons/fa";
 import { formatAMPM } from '../Functions/formatAMPM';
-import { baseUrl } from '../config'; 
-import './index.css'; 
+import { MdKeyboardBackspace } from "react-icons/md";
+import { GoFileMedia } from "react-icons/go";
+import { FaFileAlt } from "react-icons/fa";
+import { baseUrl, showFileUrl } from '../config';
+import './index.css';
 
 const Dashboard = () => {
   const senderData = JSON.parse(localStorage.getItem('senderData')) || { id: 1, fullname: 'John Doe' };
-  const [message, setMessage] = useState({ senderid: senderData.id, receiverid: 0, message: '', timeStamp: new Date() });
+  const [message, setMessage] = useState({ senderid: senderData.id, receiverid: 0, message: '', timeStamp: new Date(), file: "uploads/1724784872110.pdf" });
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [editMessage, setEditMessage] = useState({ message: "", messageId: 0 });
   const [chattingUser, setChattingUser] = useState({});
   const [chat, setChat] = useState([]);
@@ -31,9 +38,13 @@ const Dashboard = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isSelectMessageEdit, setIsSelectMessageEdit] = useState(false)
   const [searchValue, setSearchValue] = useState("")
-  const [showKeyboard, setShowKeyboard] = useState("")
 
   const chatEndRef = useRef(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleContainer = () => {
+    setIsExpanded(!isExpanded);
+  };
 
 
   // Function to fetch messages
@@ -77,12 +88,28 @@ const Dashboard = () => {
       });
   }, [senderData.id]);
 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+
+    // Set the file in both states
+    setSelectedFile(file);
+    setMessage({ ...message, file: file });
+
+    // Check if the file is an image for preview
+    if (file && /\.(jpg|jpeg|png|gif)$/i.test(file.name)) {
+      const fileUrl = URL.createObjectURL(file);  // Create a URL for image preview
+      setPreviewUrl(fileUrl);                     // Set preview URL
+    } else {
+      setPreviewUrl(null);  // Clear preview if not an image
+    }
+  };
+
   const handleEditMessageSend = (e) => {
     e.preventDefault();
     if (editMessage.message !== "") {
       axios.put(`${baseUrl}message/${editMessage.messageId}`, { message: editMessage.message })
         .then((res) => {
-          setEditMessage(prevMessage => ({ ...prevMessage, message: '' })); 
+          setEditMessage(prevMessage => ({ ...prevMessage, message: '' }));
           fetchMessages(); // Fetch updated messages after editing
         })
         .catch(err => {
@@ -100,17 +127,32 @@ const Dashboard = () => {
 
   const handleClickSend = (e) => {
     e.preventDefault();
-    if (message.message !== "") {
-      axios.post(`${baseUrl}send-message`, message)
-        .then((res) => {
-          setChat([...chat, { ...message }]);
-          setMessage(prevMessage => ({ ...prevMessage, message: '' }));
-          fetchMessages(); // Fetch updated messages after sending
-        })
-        .catch(err => {
-          console.log('Error sending message:', err.response ? err.response.data : err.message);
-        });
+
+    const formData = new FormData();
+    formData.append('senderid', message.senderid);
+    formData.append('receiverid', message.receiverid);
+    formData.append('message', message.message);
+    formData.append('timeStamp', message.timeStamp);
+
+    // Ensure file exists before appending
+    if (message.file) {
+      formData.append('file', message.file); // Append file if it exists
     }
+
+    axios.post(`${baseUrl}send-message`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+      .then((res) => {
+        setChat([...chat, { ...res.data }]); // Push the response data (message) to chat
+        setMessage(prevMessage => ({ ...prevMessage, message: '', file: null })); // Reset message and file after sending
+        fetchMessages(); // Fetch updated messages
+        setSelectedFile(null)
+      })
+      .catch(err => {
+        console.log('Error sending message:', err.response ? err.response.data : err.message);
+      });
   };
 
   const handleMessageEdit = (messageId, message) => {
@@ -134,9 +176,10 @@ const Dashboard = () => {
 
   const onClickDeleteSelected = () => {
     const selectedIdsString = selectedIds.join(",");
-      axios.post(`${baseUrl}delete-selected-messages`, { selectedIdsString, userId: senderData.id })
+    axios.post(`${baseUrl}delete-selected-messages`, { selectedIdsString, userId: senderData.id })
       .then((res) => {
         fetchMessages();
+        setSelectInput(false)
       })
       .catch(err => {
         console.log('Error deleting messageS:', err.response ? err.response.data : err.message);
@@ -173,7 +216,7 @@ const Dashboard = () => {
       axios.put(`${baseUrl}read-message`, { messageIds: unreadMessageIds })
         .then(res => {
           console.log('Messages marked as read:', res.data);
-          fetchUnreadCounts(); 
+          fetchUnreadCounts();
         })
         .catch(err => {
           console.log('Error marking messages as read:', err);
@@ -222,19 +265,19 @@ const Dashboard = () => {
     return (
       <div className='dashboard-sidebar-main-container'>
         <div className='sidebar-profile-container'>
-          <button type="button" onClick={() => setUsersView(false)} className='back-button'><FiArrowLeftCircle /></button>
+          <button type="button" onClick={() => { setUsersView(false); setIsExpanded(false) }} className='back-button'><FiArrowLeftCircle /></button>
           <input onChange={(e) => setSearchValue(e.target.value)} type='search' className='search-input' placeholder='Search Users' />
         </div>
-        <div className='chatted-users-container'>
+        <div className={`container ${isExpanded ? 'expanded' : ''}`}>
           {searchUsersData.map(eachUser => (
             <button
               type="button"
               key={eachUser.id}
-              onClick={() => handleClickSelectUser(eachUser.id, eachUser)}
+              onClick={() => { handleClickSelectUser(eachUser.id, eachUser); setIsExpanded(false) }}
               className={eachUser.id === message.receiverid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
             >
               <p className='sidebar-profile-icon'>
-                {eachUser.fullname.split(" ").length >= 1 ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0] : eachUser.fullname[0]}
+                {eachUser.fullname.split(" ").length > 1 ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0] : eachUser.fullname[0]}
               </p>
               <h1 className='sidebar-profile-heading'>{eachUser.fullname}</h1>
             </button>
@@ -249,21 +292,19 @@ const Dashboard = () => {
       <div className='dashboard-sidebar-main-container'>
         <div className='sidebar-profile-container'>
           <h1 className='sidebar-profile-heading'>{senderData.fullname}</h1>
-          <button type="button" onClick={() => setUsersView(true)} style={{marginTop:'0px'}} className='sidebar-profile-icon'><IoPersonAddOutline /></button>
+          <button type="button" onClick={() => { setUsersView(true); setIsExpanded(true) }} style={{ marginTop: '0px' }} className='sidebar-profile-icon'><IoPersonAddOutline /></button>
         </div>
-        <div className='chatted-users-container'>
+        <div className={`container ${isExpanded ? 'expanded' : ''}`}>
           {chatUsersData.map(eachUser => {
             return (
               <><button
                 type="button"
                 key={eachUser.id}
-                onClick={() => handleClickChattedUser(eachUser.id, eachUser)}
+                onClick={() => { handleClickChattedUser(eachUser.id, eachUser); setIsExpanded(false) }}
                 className={eachUser.id === message.receiverid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
               >
                 <p className="sidebar-profile-icon">
-                  {eachUser.fullname.split(" ").length > 1
-                    ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0]
-                    : eachUser.fullname[0]}
+                  {eachUser.fullname.split(" ").length > 1 ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0] : eachUser.fullname[0]}
                   {eachUser.loginstatus && <span className="status-dot"></span>}
                 </p>
                 <h1 className='sidebar-profile-heading'>{eachUser.fullname}</h1>
@@ -310,7 +351,6 @@ const Dashboard = () => {
     return (
       <form onSubmit={handleEditMessageSend} className='dashboard-input-elements-container'>
         <input
-        onClick={() => setShowKeyboard(true)}
           type='text'
           placeholder='Type your message...'
           value={editMessage.message}
@@ -328,7 +368,6 @@ const Dashboard = () => {
     return (
       <form onSubmit={handleClickSend} className='dashboard-input-elements-container'>
         <input
-        onClick={() => setShowKeyboard(true)}
           type='text'
           placeholder='Type your message...'
           value={message.message}
@@ -355,42 +394,121 @@ const Dashboard = () => {
   return (
     <div className='dashboard-total-container'>
       {usersView ? allUsers() : chattedUsers()}
+      <button className='swipe-button'> <h1 className='name-search'>{selectInput && <MdKeyboardBackspace onClick={() => setSelectInput(false)} className='back-arrow' />}{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
+        {chattingUser.fullname && chattingUser.loginstatus ? <span className='last-seen-online'> Online</span> : <span className='last-seen'> Last seen at {chattingUser.lastseen ? formatAMPM(new Date(chattingUser.lastseen)) : chatUsersData.length >= 1 && formatAMPM(new Date(chatUsersData[0].lastseen))}</span>}
+      </h1>{isExpanded ? <FaCaretSquareUp onClick={toggleContainer} /> : <FaCaretSquareDown onClick={toggleContainer} />}</button>
       <div className='dashboard-chat-container'>
-        <h1 className='name-search'>{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
+        <h1 className='name-search-1'> {selectInput && <MdKeyboardBackspace onClick={() => setSelectInput(false)} className='back-arrow' />}{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
           {chattingUser.fullname && chattingUser.loginstatus ? <span className='last-seen-online'> Online</span> : <span className='last-seen'> Last seen at {chattingUser.lastseen ? formatAMPM(new Date(chattingUser.lastseen)) : chatUsersData.length >= 1 && formatAMPM(new Date(chatUsersData[0].lastseen))}</span>}
         </h1>
         <div className='chat-container'>
           <div className='dashboard-chat-box-container'>
             {filteredMessages.map((eachMessage, index) => {
-              const timeStamp = new Date(eachMessage.timestamp)
-              const time = formatAMPM(timeStamp)
-              return <>
-                <div className='message-input-container' style={{ alignSelf: eachMessage.senderid === senderData.id ? 'flex-end' : 'flex-start' }}>
-                  {selectInput && <input className='select-input' id={eachMessage.id} onChange={onSelectMessage} type='checkbox' />}
-                  <p className={eachMessage.senderid === senderData.id ? 'message-sender' : 'message-receiver'} onMouseEnter={() => setViewEdit(eachMessage.id)} onMouseLeave={() => setViewEdit(false)} key={index}>
-                    <span className='message-span'>{eachMessage.message}</span>
-                    <div className='message-time-container'>
-                      {viewEdit === eachMessage.id ? <button type="button" onClick={() => setEditBarView((prev) => (prev === eachMessage.id ? false : eachMessage.id))} style={{ color: eachMessage.senderid === senderData.id ? 'white' : 'black' }} className='message-feature-button'><FaRegEdit /></button> : 
-                      <p className='message-feature-empty-button'></p>}
-                      <span className='time-span'>{time}{eachMessage.senderid === senderData.id && (eachMessage.read ? <IoCheckmarkDone className='double-tik-blue' /> : chattingUser.loginstatus ? <IoCheckmarkDone className='double-tik' /> : <IoCheckmarkOutline className='single-tik' />)}</span>
+              const timeStamp = new Date(eachMessage.timestamp);
+              const time = formatAMPM(timeStamp);
+              const isSender = eachMessage.senderid === senderData.id;
+              const isImage = eachMessage.file && /\.(jpg|jpeg|png|gif)$/i.test(eachMessage.file);
+
+              return (
+                <>
+                <div
+                  key={index}
+                  className="message-input-container"
+                  style={{ alignSelf: isSender ? 'flex-end' : 'flex-start' }}
+                >
+                  {selectInput && (
+                    <input
+                      className="select-input"
+                      id={eachMessage.id}
+                      onChange={onSelectMessage}
+                      type="checkbox"
+                    />
+                  )}
+                  <p
+                    className={isSender ? 'message-sender' : 'message-receiver'}
+                    onMouseEnter={() => setViewEdit(eachMessage.id)}
+                    onMouseLeave={() => setViewEdit(false)}
+                  >
+                    {isImage ? (
+                      <div style={{display: "flex", flexDirection: "column"}}>
+                      <img
+                        src={`${showFileUrl}${eachMessage.file}`}
+                        alt="Image message"
+                        className="message-image"
+                        onClick={() => window.open(`${showFileUrl}${eachMessage.file}`, '_blank')}
+                      />
+                      <span style={{marginTop: "5px"}} className="message-span">{eachMessage.message}</span>
+                      </div>
+                    ) : eachMessage.file ? (
+                      <div className="file-container">
+                        <button
+                          style={{ color: isSender ? 'white' : 'black' }}
+                          className="file-link"
+                          onClick={() => window.open(`${showFileUrl}${eachMessage.file}`, '_blank')}
+                        >
+                          <span style={{ alignSelf: 'center' }}>
+                            <FaFileAlt className="file-image-icon" />
+                          </span>
+                          <span className="file-name">{eachMessage.file}</span>
+                        </button>
+                        <span style={{marginTop: "5px"}} className="message-span">{eachMessage.message}</span>
+                      </div>
+                    ) : (
+                      <span className="message-span">{eachMessage.message}</span>
+                    )}
+                    <div className="message-time-container">
+                      {viewEdit === eachMessage.id ? (
+                        <button
+                          type="button"
+                          onClick={() => setEditBarView(prev => (prev === eachMessage.id ? false : eachMessage.id))}
+                          style={{ color: isSender ? 'white' : 'black' }}
+                          className="message-feature-button"
+                        >
+                          <FaRegEdit />
+                        </button>
+                      ) : (
+                        <p className="message-feature-empty-button"></p>
+                      )}
+                      <span className="time-span">
+                        {time}
+                        {isSender && (
+                          eachMessage.read ? (
+                            <IoCheckmarkDone className="double-tik-blue" />
+                          ) : chattingUser.loginstatus ? (
+                            <IoCheckmarkDone className="double-tik" />
+                          ) : (
+                            <IoCheckmarkOutline className="single-tik" />
+                          )
+                        )}
+                      </span>
                     </div>
                   </p>
                 </div>
-                {editBarView === eachMessage.id && messageFeatures(eachMessage)}
-              </>
-            }
-            )}
+                  {editBarView === eachMessage.id && messageFeatures(eachMessage)}
+                  </>
+              );
+            })}
+
             <div ref={chatEndRef} />
 
           </div>
-          {showEmojiPicker && <EmojiPicker className='emoji-input' onEmojiClick={onEmojiClick} />}
-          {showKeyboard && <div className='keyboard-input' onEmojiClick={onEmojiClick}>keyBoard </div>}
+          {showEmojiPicker && <div className='emoji-input'><EmojiPicker className='emoji-input' onEmojiClick={onEmojiClick} /></div>}
 
         </div>
         <div className='dashboard-chat-main-container'>
-          {selectInput ? inputBarSelectedFeaturesView() : isSelectMessageEdit ? inputBarEditView() : inputBarMessageView()
-          }
+          {selectInput ? inputBarSelectedFeaturesView() : isSelectMessageEdit ? inputBarEditView() : inputBarMessageView()}
           <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)} className='dashboard-text-emoji-button'>😀</button>
+          <input type="file" id="fileUpload" onChange={handleFileChange} style={{ display: "none" }} />
+          <label htmlFor="fileUpload" className='dashboard-file-button'>
+            <GoFileMedia />
+          </label>
+          {selectedFile && (
+            <div className='selected-image-container'>
+              {previewUrl && (
+                <img src={previewUrl} alt="Preview" className='selected-image' />
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

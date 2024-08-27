@@ -5,7 +5,7 @@ const Secure =(props)=>{
 
     const token = Cookies.get('jwtToken')
     if(token === undefined){
-        return   < Redirect to="/login"/>
+        return   <Redirect to="/login"/>
     }
     return <Route { ...props} />
 }

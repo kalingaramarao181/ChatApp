@@ -10,6 +10,7 @@ const Navbar = () => {
   const inChatLocation = location.pathname === "/chat"
   const token = Cookies.get("jwtToken");
   const senderId = localStorage.getItem("senderData") && JSON.parse(localStorage.getItem("senderData")).id
+  const isAdmin = localStorage.getItem("senderData") && JSON.parse(localStorage.getItem("senderData")).isadmin
 
   const onClickLogout =()=>{
     Cookies.remove('jwtToken')
@@ -35,7 +36,11 @@ const Navbar = () => {
               <img src="images\image.png" alt="logo" className="logo-image" />{""}
             </li>
           </Link>
-          <div className="navbar-list-container">                                                                 
+          <div className="navbar-list-container">
+          {(inChatLocation && isAdmin === 1) && 
+          <Link to="/admin" className="navbar-elements">
+            <button className="login-button">Dashboard</button>
+          </Link>}                                                                 
             {!token ? (
               <Link to="/Login" className="navbar-elements">
                 <button className="login-button" >Login</button> 
@@ -47,6 +52,7 @@ const Navbar = () => {
             ) : <Link to="/chat" className="navbar-elements">
             <button className="login-button" > Chat</button>
           </Link>}
+          
           </div>
         </ul>
       </div>

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./connection');
+const db = require('../Config/connection');
 const nodemailer = require('nodemailer');
 
 const generateOtp = () => {

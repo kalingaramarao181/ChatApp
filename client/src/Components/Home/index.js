@@ -18,42 +18,43 @@ const Home = () => {
         <div className='signin-main-container-home'>
           <div className='home-signin-main-card-container'>
             <div className='home-signin-card-container'>
-              <h1 className='home-signin-heading'>Signin</h1>
+              <h1 className='home-signin-heading'>User Status and Activity Feed</h1>
               <div>
                 <GrNotes className='signin-icon' />
               </div>
             </div>
-            <p className='home-signin-paragraph'>Sign in with your details and register on our
-              EchoChat website today. Experience seamless and secure communication with friends and family. Enjoy user-friendly
-              features designed to enhance your chatting experience.
-              Join our growing community and start chatting now!</p>
+            <p className='home-signin-paragraph'>The User Status and Activity Feed provides real-time updates on user activity and status. 
+              It displays which users are online, who is currently active in chat rooms, and recent message exchanges. 
+              This feature helps users stay informed about their contacts' availability and recent interactions. 
+              By incorporating a visual status indicator or an activity log, users can quickly see who is available for a chat or view recent conversation highlights. 
+              This can be especially useful for collaborative environments or when trying to catch up on missed messages.</p>
             <button className='home-signin-button'>Signin</button>
           </div>
           <div className='home-signin-main-card-container'>
             <div className='home-signin-card-container'>
-              <h1 className='home-signin-heading'>Signin</h1>
+              <h1 className='home-signin-heading'>Quick Access to Chat Rooms and Contacts</h1>
               <div>
-                <GrNotes className='signin-icon' />
+                <GrNotes className='signin-icon'/>
               </div>
             </div>
-            <p className='home-signin-paragraph'>Sign in with your details and register on our
-              EchoChat website today. Experience seamless and secure communication with friends and family. Enjoy user-friendly
-              features designed to enhance your chatting experience.
-              Join our growing community and start chatting now!</p>
+            <p className='home-signin-paragraph'>Quick Access to Chat Rooms and Contacts allows users to efficiently navigate to their most frequently used conversations and chat rooms. 
+              It typically includes a list of favorite or recent chats, a search bar for finding specific contacts or rooms, and options to create new chats or rooms directly from the home page. 
+              Users can swiftly continue ongoing discussions or initiate new ones without navigating through multiple menus.</p>
             <button className='home-signin-button'>Signin</button>
           </div>
           <div className='home-signin-main-card-container'>
             <div className='home-signin-card-container'>
-              <h1 className='home-signin-heading'>Signin</h1>
+              <h1 className='home-signin-heading'>User Profile and Settings</h1>
               <div>
                 <GrNotes className='signin-icon' />
               </div>
             </div>
-            <p className='home-signin-paragraph'>Sign in with your details and register on our
-              EchoChat website today. Experience seamless and secure communication with friends and family. Enjoy user-friendly
-              features designed to enhance your chatting experience.
-              Join our growing community and start chatting now!</p>
-            <button className='home-signin-button'>Signin</button>
+            <p className='home-signin-paragraph'>The User Profile and Settings section gives users control over their personal information and application preferences. 
+              It includes an overview of the user's profile, such as their picture, username, and status message, as well as options to edit this information. 
+              Additionally, users can access and adjust various settings like notification preferences, privacy options, and theme choices. 
+              This feature enhances user satisfaction by allowing customization and providing easy access to important settings. 
+              It helps users manage their experience and ensure their profile is up-to-date.</p>
+              <Link to="/signup"><button className='home-signin-button'>Signin</button></Link>
           </div>
         </div>
       </div>

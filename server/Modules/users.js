@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./connection');
+const db = require('../Config/connection');
 const bcrypt = require('bcrypt'); // Import bcrypt
 const { v4: uuidv4 } = require('uuid');
 
@@ -127,6 +127,19 @@ router.put('/users/:id', (req, res) => {
         }
     });
 });
+
+router.delete('/users/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = 'DELETE FROM userdata WHERE id = ?'
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.error('Error delete user:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json({ message: 'User Deleted successfully' });
+        }
+    });
+})
 
 // UPDATING AN EXISTING USER PASSWORD
 router.put('/update-password', async (req, res) => {

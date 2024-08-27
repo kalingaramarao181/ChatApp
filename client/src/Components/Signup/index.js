@@ -73,6 +73,8 @@ const Signup = () => {
     axios.post(`${baseUrl}send-otp`, data)
       .then(res => {
         setEmailOtp(res.data);
+        console.log(res.data);
+        
       })
       .catch(err => {
         console.log(err);
