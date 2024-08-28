@@ -16,12 +16,16 @@ const userRoutes = require('./Modules/users');
 const loginRoutes = require('./Modules/login');
 const otpRoutes = require('./Modules/sendOTP');
 const chatRoutes = require('./Modules/chat');
+const roomRoutes = require('./Modules/room');
+
 
 // Use routes
 app.use('/api', userRoutes);
 app.use('/api', loginRoutes);
 app.use('/api', chatRoutes);
 app.use('/api', otpRoutes);
+app.use('/api', roomRoutes);
+
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

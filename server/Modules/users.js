@@ -38,7 +38,8 @@ router.get('/users/:id', (req, res) => {
 //GET CHATTED USERS
 router.get('/chatted-users/:senderid', (req, res) => {
     const { senderid } = req.params;
-    const sql = `
+
+    const userSql = `
     SELECT 
         DISTINCT userdata.id, 
         userdata.fullname, 
@@ -63,15 +64,40 @@ router.get('/chatted-users/:senderid', (req, res) => {
         ) DESC;
     `;
 
-    db.query(sql, [senderid, senderid, senderid, senderid, senderid], (err, data) => {
+    const roomSql = `
+    SELECT 
+        DISTINCT r.room_id, 
+        r.room_name, 
+        r.created_at,
+        r.members,
+        r.created_by
+    FROM 
+        rooms r
+    WHERE 
+        JSON_CONTAINS(r.members, JSON_QUOTE(?), '$') = 1
+        OR r.created_by = ?
+    `;
+
+    db.query(userSql, [senderid, senderid, senderid, senderid, senderid], (err, userData) => {
         if (err) {
-            console.error('Error fetching user:', err);
-            res.status(500).json({ error: 'Internal Server Error' });
-        } else {
-            res.json(data);
+            console.error('Error fetching users:', err);
+            return res.status(500).json({ error: 'Internal Server Error while fetching users' });
         }
+
+        db.query(roomSql, [senderid, senderid], (err, roomData) => {
+            if (err) {
+                console.error('Error fetching rooms:', err);
+                return res.status(500).json({ error: 'Internal Server Error while fetching rooms' });
+            }
+
+            res.json({
+                users: userData,
+                rooms: roomData
+            });
+        });
     });
 });
+
 
 //CREATE NEW USER
 router.post('/signup-user', async (req, res) => {
