@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { useDeviceType } from '../Functions/DeviceConverter';
 import EmojiPicker from 'emoji-picker-react';
 import { BsFillSendFill } from 'react-icons/bs';
 import { FaRegEdit } from "react-icons/fa";
@@ -23,9 +24,10 @@ import './index.css';
 
 const Dashboard = () => {
     const senderData = JSON.parse(localStorage.getItem('senderData')) || { id: 1, fullname: 'John Doe' };
-    const [message, setMessage] = useState({ senderid: senderData.id, receiverid: 0, message: '', timeStamp: new Date(), file: "uploads/1724784872110.pdf" });
+    const [message, setMessage] = useState({ senderid: senderData.id, receiverid: 0, roomid: 0, message: '', timeStamp: new Date(), file: "uploads/1724784872110.pdf" });
     const [roomData, setRoomData] = useState({ roomName: "", createdBy: senderData.id, roomMembers: [] });
     const [previewUrl, setPreviewUrl] = useState(null);
+    const [isRoom, setIsRoom] = useState(false)
     const [selectedFile, setSelectedFile] = useState(null);
     const [editMessage, setEditMessage] = useState({ message: "", messageId: 0 });
     const [chattingUser, setChattingUser] = useState({});
@@ -45,6 +47,8 @@ const Dashboard = () => {
     const [searchValue, setSearchValue] = useState("")
     const chatEndRef = useRef(null);
     const [isExpanded, setIsExpanded] = useState(false);
+    const { isMobile, isTablet, isDesktop } = useDeviceType()
+
 
     const toggleContainer = () => {
         setIsExpanded(!isExpanded);
@@ -52,23 +56,37 @@ const Dashboard = () => {
 
     // Function to fetch messages
     const fetchMessages = () => {
-        if (message.receiverid) {
-            axios.get(`${baseUrl}messages/${message.senderid}/${message.receiverid}`)
+        if (message.senderid && (isRoom ? message.roomid : message.receiverid)) {
+            const url = isRoom
+                ? `${baseUrl}room-messages/${message.senderid}/${message.roomid}`
+                : `${baseUrl}messages/${message.senderid}/${message.receiverid}`;
+
+            console.log('Request URL:', url); // Check if URL is correct
+
+            axios.get(url)
                 .then((res) => {
+                    console.log('Fetched messages:', res.data); // Check response data
                     setChat(res.data);
                 })
                 .catch((err) => {
-                    console.log('Error fetching messages:', err);
+                    console.error('Error fetching messages:', err.response?.data || err.message);
                 });
+        } else {
+            console.log('Missing senderid or roomid/receiverid'); // Debug missing data
         }
     };
+
 
     // Fetch messages initially and set up polling
     useEffect(() => {
         fetchMessages();
-        const intervalId = setInterval(fetchMessages, 5000); // Poll every 5 seconds
-        return () => clearInterval(intervalId); // Cleanup on unmount
-    }, [message.senderid, message.receiverid]);
+
+        // Set up polling to fetch messages every 5 seconds
+        const intervalId = setInterval(fetchMessages, 5000);
+
+        // Cleanup interval on component unmount or dependency change
+        return () => clearInterval(intervalId);
+    }, [message.senderid, message.receiverid, message.roomid, isRoom]);
 
     useEffect(() => {
         if (senderData.id) {
@@ -86,7 +104,7 @@ const Dashboard = () => {
                 });
         }
     }, [senderData.id]);
-    
+
 
     useEffect(() => {
         axios.get(`${baseUrl}users`)
@@ -97,6 +115,7 @@ const Dashboard = () => {
                 console.log(err);
             });
     }, [senderData.id]);
+
 
     const onAddRoomButtonClick = (userId) => {
         if (roomData.roomMembers.includes(userId)) {
@@ -121,7 +140,7 @@ const Dashboard = () => {
                 alert(res.data.message || 'Room created successfully');
                 setRoomData({ roomName: "", createdBy: senderData.id, roomMembers: [] })
                 setAddUserStatus(false)
-                
+
             })
             .catch((err) => {
                 console.error('Error creating room:', err.response ? err.response.data : err.message);
@@ -172,7 +191,7 @@ const Dashboard = () => {
 
         const formData = new FormData();
         formData.append('senderid', message.senderid);
-        formData.append('receiverid', message.receiverid);
+        isRoom ? formData.append('roomid', message.roomid) : formData.append('receiverid', message.receiverid);
         formData.append('message', message.message);
         formData.append('timeStamp', message.timeStamp);
 
@@ -181,20 +200,28 @@ const Dashboard = () => {
             formData.append('file', message.file); // Append file if it exists
         }
 
-        axios.post(`${baseUrl}send-message`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
-            .then((res) => {
-                setChat([...chat, { ...res.data }]); // Push the response data (message) to chat
-                setMessage(prevMessage => ({ ...prevMessage, message: '', file: null })); // Reset message and file after sending
-                fetchMessages(); // Fetch updated messages
-                setSelectedFile(null)
-            })
-            .catch(err => {
-                console.log('Error sending message:', err.response ? err.response.data : err.message);
-            });
+        isRoom ?
+            axios.post(`${baseUrl}send-room-message`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                .then((res) => {
+                    setChat([...chat, { ...res.data }]); // Push the response data (message) to chat
+                    setMessage(prevMessage => ({ ...prevMessage, message: '', file: null })); // Reset message and file after sending
+                    fetchMessages(); // Fetch updated messages
+                    setSelectedFile(null)
+                })
+                .catch(err => {
+                    console.log('Error sending message:', err.response ? err.response.data : err.message);
+                })
+            :
+            axios.post(`${baseUrl}send-message`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                .then((res) => {
+                    setChat([...chat, { ...res.data }]); // Push the response data (message) to chat
+                    setMessage(prevMessage => ({ ...prevMessage, message: '', file: null })); // Reset message and file after sending
+                    fetchMessages(); // Fetch updated messages
+                    setSelectedFile(null)
+                })
+                .catch(err => {
+                    console.log('Error sending message:', err.response ? err.response.data : err.message);
+                })
     };
 
     const handleMessageEdit = (messageId, message) => {
@@ -251,8 +278,9 @@ const Dashboard = () => {
     };
 
     const handleClickChattedUser = async (id, user) => {
-        setMessage(prevMessage => ({ ...prevMessage, receiverid: id }));
+        setMessage(prevMessage => ({ ...prevMessage, receiverid: id, roomid: 0 }));
         setChattingUser(user);
+        setIsRoom(false)
         const unreadMessageIds = await fetchUnreadMessages(id);
         if (unreadMessageIds.length > 0) {
             axios.put(`${baseUrl}read-message`, { messageIds: unreadMessageIds })
@@ -267,6 +295,19 @@ const Dashboard = () => {
         setSelectInput(false);
     };
 
+    const handleClickRoom = async (roomid, room) => {
+        setIsRoom(true);
+        console.log('Clicked Room ID:', roomid); // Log clicked roomid
+
+        setMessage(prevMessage => ({
+            ...prevMessage,
+            roomid: roomid,
+            receiverid: 0
+        }));
+        setChattingUser(room);
+        setSelectInput(false);
+    };
+
     const handleClickSelectUser = (id, user) => {
         const isPresent = chatUsersData.some(obj => obj.id === user.id);
         setChatUsersData(!isPresent ? [...chatUsersData, user] : [...chatUsersData]);
@@ -274,7 +315,6 @@ const Dashboard = () => {
         setChattingUser(user);
         setUsersView(false);
     };
-
 
     const fetchUnreadCounts = () => {
         chatUsersData.forEach((user) => {
@@ -353,13 +393,13 @@ const Dashboard = () => {
                     <button type="button" onClick={() => { setUsersView(true); setIsExpanded(true) }} style={{ marginTop: '0px' }} className='sidebar-profile-icon'><IoPersonAddOutline /></button>
                 </div>
                 <div className={`container ${isExpanded ? 'expanded' : ''}`}>
-                {rooms.map(eachRoom => {
+                    {rooms.map(eachRoom => {
                         return (
                             <><button
                                 type="button"
                                 key={eachRoom.room_id}
-                                onClick={() => { handleClickChattedUser(eachRoom.room_id, eachRoom); setIsExpanded(false) }}
-                                className={eachRoom.room_id === message.receiverid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
+                                onClick={() => { handleClickRoom(eachRoom.roomid, eachRoom); setIsExpanded(false) }}
+                                className={isRoom && eachRoom.roomid === message.roomid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
                             >
                                 <p className="sidebar-profile-icon">
                                     <TiGroup />
@@ -376,7 +416,7 @@ const Dashboard = () => {
                                 type="button"
                                 key={eachUser.id}
                                 onClick={() => { handleClickChattedUser(eachUser.id, eachUser); setIsExpanded(false) }}
-                                className={eachUser.id === message.receiverid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
+                                className={!isRoom && eachUser.id === message.receiverid ? 'sidebar-profil-container-active' : 'sidebar-profil-container-inactive'}
                             >
                                 <p className="sidebar-profile-icon">
                                     {eachUser.fullname.split(" ").length > 1 ? eachUser.fullname.split(" ")[0][0] + eachUser.fullname.split(" ")[1][0] : eachUser.fullname[0]}
@@ -456,26 +496,54 @@ const Dashboard = () => {
         )
     }
 
-
+    const chattingUserDetails = (clName) => {
+        if (!isRoom) {
+            return (
+                <h1 className={clName}> {selectInput && <MdKeyboardBackspace onClick={() => setSelectInput(false)} className='back-arrow' />}{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
+                    {chattingUser.fullname && chattingUser.loginstatus ? <span className='last-seen-online'> Online</span> : <span className='last-seen'> Last seen at {chattingUser.lastseen ? formatAMPM(new Date(chattingUser.lastseen)) : chatUsersData.length >= 1 && formatAMPM(new Date(chatUsersData[0].lastseen))}</span>}
+                </h1>
+            )
+        } else {
+            return (
+                <h1 className={clName}>
+                    {chattingUser.room_name}
+                </h1>
+            )
+        }
+    }
 
 
 
     const filteredMessages = chat.filter(
-        message =>
-            !(message.senderid === senderData.id && message.deleted_by_sender) &&
-            !(message.receiverid === senderData.id && message.deleted_by_receiver)
+        message => {
+            if (isRoom) {
+                return !(message.senderid === senderData.id && message.deleted_by_sender) &&
+                    !(message.roomid === senderData.id && message.deleted_by_receiver)
+            } else {
+                return !(message.senderid === senderData.id && message.deleted_by_sender) &&
+                    !(message.receiverid === senderData.id && message.deleted_by_receiver)
+            }
+        }
+
     );
+
+    const userName = (id) => {
+        const user = usersData.find(user => user.id === id);
+        return user ? user.fullname : 'User not found';
+    }
+
+    console.log(chat);
+
 
     return (
         <div className='dashboard-total-container'>
             {usersView ? allUsers() : chattedUsers()}
-            <button className='swipe-button'> <h1 className='name-search'>{selectInput && <MdKeyboardBackspace onClick={() => setSelectInput(false)} className='back-arrow' />}{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
-                {chattingUser.fullname && chattingUser.loginstatus ? <span className='last-seen-online'> Online</span> : <span className='last-seen'> Last seen at {chattingUser.lastseen ? formatAMPM(new Date(chattingUser.lastseen)) : chatUsersData.length >= 1 && formatAMPM(new Date(chatUsersData[0].lastseen))}</span>}
-            </h1>{isExpanded ? <FaCaretSquareUp onClick={toggleContainer} /> : <FaCaretSquareDown onClick={toggleContainer} />}</button>
+            <button className='swipe-button'>
+                {isMobile && chattingUserDetails('name-search')}
+                {isExpanded ? <FaCaretSquareUp onClick={toggleContainer} /> : <FaCaretSquareDown onClick={toggleContainer} />}
+            </button>
             <div className='dashboard-chat-container'>
-                <h1 className='name-search-1'> {selectInput && <MdKeyboardBackspace onClick={() => setSelectInput(false)} className='back-arrow' />}{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
-                    {chattingUser.fullname && chattingUser.loginstatus ? <span className='last-seen-online'> Online</span> : <span className='last-seen'> Last seen at {chattingUser.lastseen ? formatAMPM(new Date(chattingUser.lastseen)) : chatUsersData.length >= 1 && formatAMPM(new Date(chatUsersData[0].lastseen))}</span>}
-                </h1>
+                {!isMobile && chattingUserDetails('name-search-1')}
                 <div className='chat-container'>
                     <div className='dashboard-chat-box-container'>
                         {filteredMessages.map((eachMessage, index) => {
@@ -483,7 +551,6 @@ const Dashboard = () => {
                             const time = formatAMPM(timeStamp);
                             const isSender = eachMessage.senderid === senderData.id;
                             const isImage = eachMessage.file && /\.(jpg|jpeg|png|gif)$/i.test(eachMessage.file);
-
                             return (
                                 <>
                                     <div
@@ -503,35 +570,10 @@ const Dashboard = () => {
                                             className={isSender ? 'message-sender' : 'message-receiver'}
                                             onMouseEnter={() => setViewEdit(eachMessage.id)}
                                             onMouseLeave={() => setViewEdit(false)}
+                                            style={{ display: "flex", flexDirection: "column" }}
                                         >
-                                            {isImage ? (
-                                                <div style={{ display: "flex", flexDirection: "column" }}>
-                                                    <img
-                                                        src={`${showFileUrl}${eachMessage.file}`}
-                                                        alt="Image-message"
-                                                        className="message-image"
-                                                        onClick={() => window.open(`${showFileUrl}${eachMessage.file}`, '_blank')}
-                                                    />
-                                                    <span style={{ marginTop: "5px" }} className="message-span">{eachMessage.message}</span>
-                                                </div>
-                                            ) : eachMessage.file ? (
-                                                <div className="file-container">
-                                                    <button
-                                                        style={{ color: isSender ? 'white' : 'black' }}
-                                                        className="file-link"
-                                                        onClick={() => window.open(`${showFileUrl}${eachMessage.file}`, '_blank')}
-                                                    >
-                                                        <span style={{ alignSelf: 'center' }}>
-                                                            <FaFileAlt className="file-image-icon" />
-                                                        </span>
-                                                        <span className="file-name">{eachMessage.file}</span>
-                                                    </button>
-                                                    <span style={{ marginTop: "5px" }} className="message-span">{eachMessage.message}</span>
-                                                </div>
-                                            ) : (
-                                                <span className="message-span">{eachMessage.message}</span>
-                                            )}
-                                            <div className="message-time-container">
+                                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}} className='user-name-edit-container'>
+                                                {isRoom && <p style = {{margin: "0px", padding:"0px", fontSize: "10px", fontWeight: "bold"}}className='user-name-span'>{isSender ? "You" : userName(eachMessage.senderid)}</p>}
                                                 {viewEdit === eachMessage.id ? (
                                                     <button
                                                         type="button"
@@ -544,18 +586,50 @@ const Dashboard = () => {
                                                 ) : (
                                                     <p className="message-feature-empty-button"></p>
                                                 )}
-                                                <span className="time-span">
-                                                    {time}
-                                                    {isSender && (
-                                                        eachMessage.read ? (
-                                                            <IoCheckmarkDone className="double-tik-blue" />
-                                                        ) : chattingUser.loginstatus ? (
-                                                            <IoCheckmarkDone className="double-tik" />
-                                                        ) : (
-                                                            <IoCheckmarkOutline className="single-tik" />
-                                                        )
-                                                    )}
-                                                </span>
+                                            </div>
+                                            <div className='username-message-sender-container'>
+                                                {isImage ? (
+                                                    <div style={{ display: "flex", flexDirection: "column" }}>
+                                                        <img
+                                                            src={`${showFileUrl}${eachMessage.file}`}
+                                                            alt="Image-message"
+                                                            className="message-image"
+                                                            onClick={() => window.open(`${showFileUrl}${eachMessage.file}`, '_blank')}
+                                                        />
+                                                        <span style={{ marginTop: "5px" }} className="message-span">{eachMessage.message}</span>
+                                                    </div>
+                                                ) : eachMessage.file ? (
+                                                    <div className="file-container">
+                                                        <button
+                                                            style={{ color: isSender ? 'white' : 'black' }}
+                                                            className="file-link"
+                                                            onClick={() => window.open(`${showFileUrl}${eachMessage.file}`, '_blank')}
+                                                        >
+                                                            <span style={{ alignSelf: 'center' }}>
+                                                                <FaFileAlt className="file-image-icon" />
+                                                            </span>
+                                                            <span className="file-name">{eachMessage.file}</span>
+                                                        </button>
+                                                        <span style={{ marginTop: "5px" }} className="message-span">{eachMessage.message}</span>
+                                                    </div>
+                                                ) : (
+                                                    <span className="message-span">{eachMessage.message}</span>
+                                                )}
+                                                <div className="message-time-container">
+
+                                                    <span className="time-span">
+                                                        {time}
+                                                        {isSender && (
+                                                            eachMessage.read ? (
+                                                                <IoCheckmarkDone className="double-tik-blue" />
+                                                            ) : chattingUser.loginstatus ? (
+                                                                <IoCheckmarkDone className="double-tik" />
+                                                            ) : (
+                                                                <IoCheckmarkOutline className="single-tik" />
+                                                            )
+                                                        )}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </p>
                                     </div>
@@ -563,9 +637,7 @@ const Dashboard = () => {
                                 </>
                             );
                         })}
-
                         <div ref={chatEndRef} />
-
                     </div>
                     {showEmojiPicker && <div className='emoji-input'><EmojiPicker className='emoji-input' onEmojiClick={onEmojiClick} /></div>}
 

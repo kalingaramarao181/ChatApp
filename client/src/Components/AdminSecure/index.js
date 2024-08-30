@@ -11,7 +11,8 @@ const AdminSecure = (props) => {
             const decodedToken = jwtDecode(token);
             const currentTime = Date.now() / 1000; // in seconds
             if (decodedToken.exp < currentTime) {
-                return <Redirect to="/chat" />;
+                alert("Session Expired Keep Login")
+                return <Redirect to="/login" />;
             }
 
             // Check if the user is an admin

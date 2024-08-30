@@ -4,16 +4,17 @@ const db = require('../Config/connection');
 const upload = require('../Config/multer'); // Import multer middleware
 
 //GET MESSAGES USING USER_ID AND RECEIVER_ID
-router.get('/messages/:senderid/:receiverid', (req, res) => {
-    const { senderid, receiverid } = req.params;
-    const query = `
-      SELECT * FROM messages 
-      WHERE (senderid = ? AND receiverid = ?)
-         OR (senderid = ? AND receiverid = ?)
-      ORDER BY timestamp ASC
-    `;
+router.get('/room-messages/:senderid/:roomid', (req, res) => {
+    const { roomid } = req.params;
 
-    db.query(query, [senderid, receiverid, receiverid, senderid], (err, results) => {
+    const query = `
+    SELECT * FROM room_messages 
+    WHERE  roomid = ?
+    ORDER BY timestamp ASC
+  `;
+    const values = [roomid];
+
+    db.query(query, values, (err, results) => {
         if (err) {
             console.error('Error fetching messages:', err);
             return res.status(500).send('Internal server error');
@@ -22,19 +23,18 @@ router.get('/messages/:senderid/:receiverid', (req, res) => {
     });
 });
 
-
 //SEND MESSAGE TO DATABASE
-router.post('/send-message', upload.single('file'), (req, res) => {
-    const { senderid, receiverid, message } = req.body;
-    const file = req.file; // Access uploaded file
+router.post('/send-room-message', upload.single('file'), (req, res) => {
+    const { senderid, roomid, message } = req.body;
+    const file = req.file; 
 
     // Use a single query string
-    const query = 'INSERT INTO messages (senderid, receiverid, message, file) VALUES (?, ?, ?, ?)';
+    const query = 'INSERT INTO room_messages (senderid, roomid, message, file) VALUES (?, ?, ?, ?)';
 
     // If no file is uploaded, use NULL for the file field
     const values = [
         senderid,
-        receiverid,
+        roomid,
         message,
         file ? file.path : null
     ];
@@ -49,13 +49,13 @@ router.post('/send-message', upload.single('file'), (req, res) => {
 });
 
 //DELETE USER MESSAGE
-router.post('/delete-message', (req, res) => {
+router.post('/delete-room-message', (req, res) => {
     const { messageId, userId } = req.body;
     const query = `
       UPDATE messages 
       SET deleted_by_sender = IF(senderid = ?, TRUE, deleted_by_sender),
-          deleted_by_receiver = IF(receiverid = ?, TRUE, deleted_by_receiver)
-      WHERE id = ? AND (senderid = ? OR receiverid = ?)
+          deleted_by_receiver = IF(roomid = ?, TRUE, deleted_by_receiver)
+      WHERE id = ? AND (senderid = ? OR roomid = ?)
     `;
     db.query(query, [userId, userId, messageId, userId, userId], (err, result) => {
         if (err) {
@@ -66,7 +66,7 @@ router.post('/delete-message', (req, res) => {
 });
 
 //DELETE SELECTED MESSAGES
-router.post('/delete-selected-messages', (req, res) => {
+router.post('/delete-selected-room-messages', (req, res) => {
     const { selectedIdsString, userId } = req.body;
 
     const ids = selectedIdsString.split(',').map(id => parseInt(id, 10));
@@ -80,8 +80,8 @@ router.post('/delete-selected-messages', (req, res) => {
     const query = `
       UPDATE messages 
       SET deleted_by_sender = IF(senderid = ?, TRUE, deleted_by_sender),
-          deleted_by_receiver = IF(receiverid = ?, TRUE, deleted_by_receiver)
-      WHERE id IN (${placeholders}) AND (senderid = ? OR receiverid = ?)
+          deleted_by_receiver = IF(roomid = ?, TRUE, deleted_by_receiver)
+      WHERE id IN (${placeholders}) AND (senderid = ? OR roomid = ?)
     `;
 
     db.query(query, [userId, userId, ...ids, userId, userId], (err, result) => {
@@ -94,7 +94,7 @@ router.post('/delete-selected-messages', (req, res) => {
 });
 
 //EDIT MESSAGE
-router.put("/message/:messageId", (req, res) => {
+router.put("/room-message/:messageId", (req, res) => {
     const { messageId } = req.params;
     const { message } = req.body;
     const query = `UPDATE messages SET message = ? WHERE id = ?`;
@@ -108,7 +108,7 @@ router.put("/message/:messageId", (req, res) => {
 });
 
 //UPDATE READ MESSAGE
-router.put("/read-message", (req, res) => {
+router.put("/read-room-message", (req, res) => {
     const { messageIds } = req.body;
 
     if (!Array.isArray(messageIds) || messageIds.length === 0) {
@@ -132,7 +132,7 @@ router.put("/read-message", (req, res) => {
 });
 
 //DELETE MESSAGE (NOT IN USE)
-router.delete("/message/:messageId", (req, res) => {
+router.delete("/room-message/:messageId", (req, res) => {
     const { messageId } = req.params;
     const query = `DELETE FROM messages WHERE id = ?`;
     db.query(query, [messageId], (err, result) => {
@@ -145,7 +145,7 @@ router.delete("/message/:messageId", (req, res) => {
 });
 
 //DELETE SELECTED MESSAGES (NOT IN USE)
-router.delete('/selected-messages/:selectedIdsString', (req, res) => {
+router.delete('/selected-room-messages/:selectedIdsString', (req, res) => {
     const { selectedIdsString } = req.params;
     const ids = selectedIdsString.split(',').map(id => parseInt(id, 10));
 

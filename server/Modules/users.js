@@ -65,17 +65,17 @@ router.get('/chatted-users/:senderid', (req, res) => {
     `;
 
     const roomSql = `
-    SELECT 
-        DISTINCT r.room_id, 
-        r.room_name, 
-        r.created_at,
-        r.members,
-        r.created_by
-    FROM 
-        rooms r
-    WHERE 
-        JSON_CONTAINS(r.members, JSON_QUOTE(?), '$') = 1
-        OR r.created_by = ?
+            SELECT 
+                    DISTINCT r.roomid, 
+                    r.room_name, 
+                    r.created_at,
+                    r.members,
+                    r.created_by
+                FROM 
+                    rooms r
+                WHERE 
+                    FIND_IN_SET(?, REPLACE(REPLACE(r.members, '[', ''), ']', '')) > 0
+                    OR r.created_by = ?
     `;
 
     db.query(userSql, [senderid, senderid, senderid, senderid, senderid], (err, userData) => {
@@ -89,6 +89,7 @@ router.get('/chatted-users/:senderid', (req, res) => {
                 console.error('Error fetching rooms:', err);
                 return res.status(500).json({ error: 'Internal Server Error while fetching rooms' });
             }
+
 
             res.json({
                 users: userData,

@@ -17,6 +17,8 @@ const loginRoutes = require('./Modules/login');
 const otpRoutes = require('./Modules/sendOTP');
 const chatRoutes = require('./Modules/chat');
 const roomRoutes = require('./Modules/room');
+const roomChatRoutes = require('./Modules/roomChat');
+
 
 
 // Use routes
@@ -25,6 +27,7 @@ app.use('/api', loginRoutes);
 app.use('/api', chatRoutes);
 app.use('/api', otpRoutes);
 app.use('/api', roomRoutes);
+app.use('/api', roomChatRoutes);
 
 
 const PORT = process.env.PORT || 4000;
