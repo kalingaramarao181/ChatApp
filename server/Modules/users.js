@@ -21,6 +21,33 @@ router.get('/users', (req, res) => {
     });
 });
 
+router.get('/room-users/:userIds', (req, res) => {
+    const { userIds } = req.params;
+
+    // Split the comma-separated userIds and convert them to integers
+    const ids = userIds.split(',').map(id => parseInt(id, 10));
+
+    // Check for invalid IDs
+    if (ids.some(isNaN)) {
+        return res.status(400).send('Invalid IDs');
+    }
+
+    // Generate placeholders for the SQL query
+    const placeholders = ids.map(() => '?').join(',');
+
+    // SQL query to select users by ID
+    const query = `SELECT * FROM userdata WHERE id IN (${placeholders})`;
+
+    db.query(query, ids, (err, result) => {
+        if (err) {
+            console.error('Error Fetching users:', err);
+            return res.status(500).send('Internal server error');
+        }
+        res.status(200).send(result);
+    });
+});
+
+
 //GET A SINGLE USER BY ID
 router.get('/users/:id', (req, res) => {
     const { id } = req.params;
@@ -141,11 +168,12 @@ router.post('/signup-user', async (req, res) => {
 
 
 // UPDATE EXISTING USER
-router.put('/users/:id', (req, res) => {
+router.put('/users/:id', async (req, res) => {
     const { id } = req.params;
     const { fullname, email, password, phoneno, dateofbirth, address } = req.body; // Example fields
+    const hashedPassword = await bcrypt.hash(password, 10);
     const sql = 'UPDATE userdata SET fullname = ?, email = ?, password = ?, phoneno = ?, dateofbirth = ?, address = ? WHERE id = ?';
-    db.query(sql, [fullname, email, password, phoneno, dateofbirth, address, id], (err, result) => {
+    db.query(sql, [fullname, email, hashedPassword, phoneno, dateofbirth, address, id], (err, result) => {
         if (err) {
             console.error('Error updating user:', err);
             res.status(500).json({ error: 'Internal Server Error' });
@@ -157,16 +185,28 @@ router.put('/users/:id', (req, res) => {
 
 router.delete('/users/:id', (req, res) => {
     const { id } = req.params;
-    const sql = 'DELETE FROM userdata WHERE id = ?'
-    db.query(sql, [id], (err, result) => {
+    
+    const deleteMessagesQuery = 'DELETE FROM messages WHERE senderid = ? OR receiverid = ?';
+    const deleteUserQuery = 'DELETE FROM userdata WHERE id = ?';
+
+    // First, delete messages where the user is either the sender or receiver
+    db.query(deleteMessagesQuery, [id, id], (err, result) => {
         if (err) {
-            console.error('Error delete user:', err);
-            res.status(500).json({ error: 'Internal Server Error' });
-        } else {
-            res.json({ message: 'User Deleted successfully' });
+            console.error('Error deleting user messages:', err);
+            return res.status(500).json({ error: 'Internal Server Error' });
         }
+
+        // Then, delete the user from userdata
+        db.query(deleteUserQuery, [id], (err, result) => {
+            if (err) {
+                console.error('Error deleting user:', err);
+                return res.status(500).json({ error: 'Internal Server Error' });
+            }
+
+            res.json({ message: 'User and their messages deleted successfully' });
+        });
     });
-})
+});
 
 // UPDATING AN EXISTING USER PASSWORD
 router.put('/update-password', async (req, res) => {

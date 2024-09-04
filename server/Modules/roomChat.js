@@ -52,7 +52,7 @@ router.post('/send-room-message', upload.single('file'), (req, res) => {
 router.post('/delete-room-message', (req, res) => {
     const { messageId, userId } = req.body;
     const query = `
-      UPDATE messages 
+      UPDATE room_messages
       SET deleted_by_sender = IF(senderid = ?, TRUE, deleted_by_sender),
           deleted_by_receiver = IF(roomid = ?, TRUE, deleted_by_receiver)
       WHERE id = ? AND (senderid = ? OR roomid = ?)
@@ -78,7 +78,7 @@ router.post('/delete-selected-room-messages', (req, res) => {
     const placeholders = ids.map(() => '?').join(',');
 
     const query = `
-      UPDATE messages 
+      UPDATE room_messages 
       SET deleted_by_sender = IF(senderid = ?, TRUE, deleted_by_sender),
           deleted_by_receiver = IF(roomid = ?, TRUE, deleted_by_receiver)
       WHERE id IN (${placeholders}) AND (senderid = ? OR roomid = ?)
@@ -97,7 +97,7 @@ router.post('/delete-selected-room-messages', (req, res) => {
 router.put("/room-message/:messageId", (req, res) => {
     const { messageId } = req.params;
     const { message } = req.body;
-    const query = `UPDATE messages SET message = ? WHERE id = ?`;
+    const query = `UPDATE room_messages SET message = ? WHERE id = ?`;
     db.query(query, [message, messageId], (err, result) => {
         if (err) {
             console.error('Error editing message:', err);

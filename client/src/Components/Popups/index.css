@@ -1,0 +1,133 @@
+/* index.css */
+.blur-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Optional dark overlay */
+    backdrop-filter: blur(5px); /* Adjust the blur value as per need */
+    z-index: 998; /* Make sure it's below the popup */
+}
+
+.popup-content {
+    position: relative;
+    z-index: 999; /* Keep popup above the blurred background */
+}
+
+.user-profile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #4b4b4b;
+  }
+  
+  .profile-card {
+    display: flex;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+  }
+  
+  .profile-picture-container {
+    position: relative;
+    padding: 16px;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .profile-picture {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+  
+  .update-button {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #000000;
+    color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .profile-content {
+    flex-grow: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  .profile-stats-1{
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .admin-status{
+    font-size: 10px;
+    color: green;
+  }
+  .add-members-button{
+    background-color: transparent;
+    font-family: "Roboto";
+    border: none;
+    font-weight: bold;
+  }
+  
+  .profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .profile-name {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .edit-button {
+    background-color: #17a2b8;
+    color: #ffffff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    align-self: flex-end;
+  }
+  
+  .profile-location {
+    color: #888888;
+    margin: 8px 0;
+  }
+  
+  .profile-details {
+    margin-top: 16px;
+  }
+  
+  .profile-details p {
+    margin: 4px 0;
+  }
+  
+  .profile-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+  }
+  
+  .profile-rating,
+  .profile-activity {
+    text-align: center;
+  }
+  

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useDeviceType } from '../Functions/DeviceConverter';
 import EmojiPicker from 'emoji-picker-react';
+import UserInformation from '../Popups/userInformation';
 import { BsFillSendFill } from 'react-icons/bs';
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -18,14 +19,16 @@ import { MdKeyboardBackspace } from "react-icons/md";
 import { GoFileMedia } from "react-icons/go";
 import { FaFileAlt } from "react-icons/fa";
 import { MdOutlineGroupAdd } from "react-icons/md";
+import { IoIosInformationCircleOutline } from "react-icons/io";
 import { TiGroup } from "react-icons/ti";
 import { baseUrl, showFileUrl } from '../config';
 import './index.css';
+import RoomInformation from '../Popups/roomInformation';
 
 const Dashboard = () => {
     const senderData = JSON.parse(localStorage.getItem('senderData')) || { id: 1, fullname: 'John Doe' };
     const [message, setMessage] = useState({ senderid: senderData.id, receiverid: 0, roomid: 0, message: '', timeStamp: new Date(), file: "uploads/1724784872110.pdf" });
-    const [roomData, setRoomData] = useState({ roomName: "", createdBy: senderData.id, roomMembers: [] });
+    const [roomData, setRoomData] = useState({ roomName: "", createdBy: senderData.id, roomMembers: [senderData.id] });
     const [previewUrl, setPreviewUrl] = useState(null);
     const [isRoom, setIsRoom] = useState(false)
     const [selectedFile, setSelectedFile] = useState(null);
@@ -37,6 +40,8 @@ const Dashboard = () => {
     const [selectedIds, setSelectedIds] = useState([])
     const [unreadCounts, setUnreadCounts] = useState([]);
     const [chatUsersData, setChatUsersData] = useState([]);
+    const [openUserInformation, setOpenUserInformation] = useState(false)
+    const [openRoomInformation, setOpenRoomInformation] = useState(false)
     const [rooms, setRooms] = useState([]);
     const [viewEdit, setViewEdit] = useState(false)
     const [usersView, setUsersView] = useState(false)
@@ -65,7 +70,6 @@ const Dashboard = () => {
 
             axios.get(url)
                 .then((res) => {
-                    console.log('Fetched messages:', res.data); // Check response data
                     setChat(res.data);
                 })
                 .catch((err) => {
@@ -96,6 +100,7 @@ const Dashboard = () => {
                     const { users, rooms } = res.data;
                     setChatUsersData(users);
                     setRooms(rooms)
+                    setChattingUser(users[0])
                     setMessage(prevMessage => ({ ...prevMessage, receiverid: users[0]?.id || 0 }));
                 })
                 .catch(err => {
@@ -168,7 +173,7 @@ const Dashboard = () => {
     const handleEditMessageSend = (e) => {
         e.preventDefault();
         if (editMessage.message !== "") {
-            axios.put(`${baseUrl}message/${editMessage.messageId}`, { message: editMessage.message })
+            axios.put(`${baseUrl}${isRoom ? "room-message" : "message"}/${editMessage.messageId}`, { message: editMessage.message })
                 .then((res) => {
                     setEditMessage(prevMessage => ({ ...prevMessage, message: '' }));
                     fetchMessages(); // Fetch updated messages after editing
@@ -245,7 +250,7 @@ const Dashboard = () => {
 
     const onClickDeleteSelected = () => {
         const selectedIdsString = selectedIds.join(",");
-        axios.post(`${baseUrl}delete-selected-messages`, { selectedIdsString, userId: senderData.id })
+        axios.post(`${baseUrl}${isRoom ? "delete-selected-room-messages" : "delete-selected-messages"}`, { selectedIdsString, userId: senderData.id })
             .then((res) => {
                 fetchMessages();
                 setSelectInput(false)
@@ -256,7 +261,7 @@ const Dashboard = () => {
     };
 
     const handleMessageDelete = (messageId) => {
-        axios.post(`${baseUrl}delete-message`, { messageId, userId: senderData.id })
+        axios.post(`${baseUrl}${isRoom ? "delete-room-message" : "delete-message" }`, { messageId, userId: senderData.id })
             .then((res) => {
                 setEditBarView(false);
                 fetchMessages(); // Fetch updated messages after deletion
@@ -351,7 +356,7 @@ const Dashboard = () => {
                     <input onChange={(e) => setSearchValue(e.target.value)} type='search' className='search-input' placeholder='Search Users' />
                 </div>
                 <div className={`container ${isExpanded ? 'expanded' : ''}`}>
-                    {roomData.roomMembers.length === 0 ?
+                    {roomData.roomMembers.length === 1 ?
                         <button type="button" onClick={() => setAddUserStatus(prevState => (!prevState))} className='sidebar-profil-container-inactive'>
                             <p className='sidebar-group-icon'><MdOutlineGroupAdd /></p>
                             <h1 className='sidebar-profile-heading'>Create Room</h1>
@@ -499,14 +504,18 @@ const Dashboard = () => {
     const chattingUserDetails = (clName) => {
         if (!isRoom) {
             return (
-                <h1 className={clName}> {selectInput && <MdKeyboardBackspace onClick={() => setSelectInput(false)} className='back-arrow' />}{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
+                <div className='chatted-user-details'>
+                <h1 style={{margin: "0px"}} className={clName}> {selectInput && <MdKeyboardBackspace onClick={() => setSelectInput(false)} className='back-arrow' />}{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
                     {chattingUser.fullname && chattingUser.loginstatus ? <span className='last-seen-online'> Online</span> : <span className='last-seen'> Last seen at {chattingUser.lastseen ? formatAMPM(new Date(chattingUser.lastseen)) : chatUsersData.length >= 1 && formatAMPM(new Date(chatUsersData[0].lastseen))}</span>}
                 </h1>
+                <button onClick={() => setOpenUserInformation(true)} className='info-button'><IoIosInformationCircleOutline /></button>
+                </div>
             )
         } else {
             return (
-                <h1 className={clName}>
+                <h1 className={`${clName} search-user-2`}>
                     {chattingUser.room_name}
+                    <button onClick={() => setOpenRoomInformation(true)} className='info-button'><IoIosInformationCircleOutline /></button>
                 </h1>
             )
         }
@@ -532,10 +541,13 @@ const Dashboard = () => {
         return user ? user.fullname : 'User not found';
     }
 
-    console.log(chat);
+    console.log(senderData.id);
+    
+    
 
 
     return (
+        <>
         <div className='dashboard-total-container'>
             {usersView ? allUsers() : chattedUsers()}
             <button className='swipe-button'>
@@ -658,7 +670,21 @@ const Dashboard = () => {
                     )}
                 </div>
             </div>
+            <UserInformation
+                openUserInformation={openUserInformation}
+                setOpenUserInformation={setOpenUserInformation}
+                userId={chattingUser.id}
+                isRoom={isRoom}
+            />
+            <RoomInformation
+                openRoomInformation={openRoomInformation}
+                setOpenRoomInformation={setOpenRoomInformation}
+                userId={chattingUser.roomid}
+                isRoom={isRoom}
+                senderId={senderData.id}
+            />
         </div>
+        </>
     );
 };
 

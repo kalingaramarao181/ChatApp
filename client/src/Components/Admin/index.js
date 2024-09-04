@@ -22,6 +22,7 @@ const customStyles = {
 const Admin = () => {
   const [userData, setUserData] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
+  const [deleteUserData, setDeleteUserData] = useState({userId: "", userName: ""});
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -31,6 +32,9 @@ const Admin = () => {
   });
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
+  
+
 
   useEffect(() => {
     axios
@@ -45,9 +49,10 @@ const Admin = () => {
 
   const handleDelete = (id) => {
     axios
-      .delete(`${baseUrl}users/${id}`)
+      .delete(`${baseUrl}users/${deleteUserData.userId}`)
       .then(() => {
-        setUserData(userData.filter((user) => user.id !== id));
+        setUserData(userData.filter((user) => user.id !== deleteUserData.userId));
+        setModalIsOpenDelete(false)
       })
       .catch((err) => {
         console.error("Error deleting user:", err);
@@ -62,6 +67,7 @@ const Admin = () => {
       phoneno: user.phoneno,
       dateofbirth: user.dateofbirth,
       address: user.address,
+      password: user.password
     });
     setModalIsOpen(true); // Open the modal
   };
@@ -92,8 +98,113 @@ const Admin = () => {
       });
   };
 
+  const editUserPopup = () => {
+    return <Modal
+    isOpen={modalIsOpen}
+    onRequestClose={() => setModalIsOpen(false)}
+    style={customStyles}
+    contentLabel="Edit User"
+  >
+    <div>
+      <h3>Edit User</h3>
+      <form onSubmit={handleFormSubmit}>
+        <div>
+          <label className="dashboard-lable">Full Name:</label>
+          <input
+            type="text"
+            name="fullname"
+            value={formData.fullname}
+            onChange={handleFormChange}
+            className="dashboard-edit-input"
+          />
+        </div>
+        <div>
+          <label className="dashboard-lable">Email:</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleFormChange}
+            className="dashboard-edit-input"
+          />
+        </div>
+        <div>
+          <label className="dashboard-lable">Phone No:</label>
+
+          <input
+            type="text"
+            name="phoneno"
+            value={formData.phoneno}
+            onChange={handleFormChange}
+            className="dashboard-edit-input"
+          />
+        </div>
+        <div>
+          <label className="dashboard-lable">Date of Birth:</label>
+
+          <input
+            type="date"
+            name="dateofbirth"
+            value={formData.dateofbirth}
+            onChange={handleFormChange}
+            className="dashboard-edit-input"
+          />
+        </div>
+        <div>
+          <label className="dashboard-lable">Address:</label>
+
+          <input
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleFormChange}
+            className="dashboard-edit-input"
+          />
+        </div>
+        <div className="dashboard-button-container">
+          <button
+            type="button"
+            className="dashboard-edit-buttons1"
+            onClick={() => setModalIsOpen(false)}
+          >
+            Cancel
+          </button>
+          <button type="submit" className="dashboard-edit-buttons2">
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </Modal>
+  }
+
+  const deleteUserPopup = () => {
+    return <Modal
+    isOpen={modalIsOpenDelete}
+    onRequestClose={() => setModalIsOpenDelete(false)}
+    style={customStyles}
+    contentLabel="Delete User"
+  >
+    <div>
+      <h5>Are you sure you want to Delete User ('{deleteUserData.userName}')</h5>
+        <div className="dashboard-button-container">
+          <button
+            type="button"
+            className="dashboard-edit-buttons1"
+            onClick={() => setModalIsOpenDelete(false)}
+          >
+            Cancel
+          </button>
+          <button type="button" onClick={handleDelete} className="dashboard-edit-buttons2">
+            Delete
+          </button>
+        </div>
+        </div>
+
+  </Modal>
+  }
+
   return (
-    <>
       <div className="orders-page">
         <div className="sidebar">
           <h2 className="admin-heading">Admin</h2>
@@ -135,7 +246,10 @@ const Admin = () => {
                   <td>
                     <button
                       className="action-button-delete"
-                      onClick={() => handleDelete(user.id)}
+                      onClick={() =>  {
+                        setModalIsOpenDelete(true)
+                        setDeleteUserData({...deleteUserData, userId: user.id, userName: user.fullname })
+                      }}
                     >
                       Delete
                     </button>
@@ -152,86 +266,10 @@ const Admin = () => {
               ))}
             </tbody>
           </table>
-          <Modal
-            isOpen={modalIsOpen}
-            onRequestClose={() => setModalIsOpen(false)}
-            style={customStyles}
-            contentLabel="Edit User"
-          >
-            <div>
-              <h3>Edit User</h3>
-              <form onSubmit={handleFormSubmit}>
-                <div>
-                  <label className="dashboard-lable">Full Name:</label>
-                  <input
-                    type="text"
-                    name="fullname"
-                    value={formData.fullname}
-                    onChange={handleFormChange}
-                    className="dashboard-edit-input"
-                  />
-                </div>
-                <div>
-                  <label className="dashboard-lable">Email:</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleFormChange}
-                    className="dashboard-edit-input"
-                  />
-                </div>
-                <div>
-                  <label className="dashboard-lable">Phone No:</label>
-
-                  <input
-                    type="text"
-                    name="phoneno"
-                    value={formData.phoneno}
-                    onChange={handleFormChange}
-                    className="dashboard-edit-input"
-                  />
-                </div>
-                <div>
-                  <label className="dashboard-lable">Date of Birth:</label>
-
-                  <input
-                    type="date"
-                    name="dateofbirth"
-                    value={formData.dateofbirth}
-                    onChange={handleFormChange}
-                    className="dashboard-edit-input"
-                  />
-                </div>
-                <div>
-                  <label className="dashboard-lable">Address:</label>
-
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleFormChange}
-                    className="dashboard-edit-input"
-                  />
-                </div>
-                <div className="dashboard-button-container">
-                  <button
-                    type="button"
-                    className="dashboard-edit-buttons1"
-                    onClick={() => setModalIsOpen(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button type="submit" className="dashboard-edit-buttons2">
-                    Save
-                  </button>
-                </div>
-              </form>
-            </div>
-          </Modal>
+          {editUserPopup()}
+          {deleteUserPopup()}
         </div>
       </div>
-    </>
   );
 };
 

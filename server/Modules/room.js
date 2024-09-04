@@ -4,6 +4,20 @@ const db = require('../Config/connection');
 const bcrypt = require('bcrypt'); // Import bcrypt
 
 
+//GET ROOM
+router.get('/room/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = 'SELECT * FROM rooms WHERE roomid = ?';
+    db.query(sql, [id], (err, data) => {
+        if (err) {
+            console.error('Error fetching user:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json(data[0]);
+        }
+    });
+});
+
 // CREATE NEW ROOM
 router.post('/create-room', async (req, res) => {
     const { roomName, createdBy, roomMembers } = req.body;
@@ -33,36 +47,34 @@ router.post('/create-room', async (req, res) => {
 });
 
 
+
 //JOIN USER IN ROOM
-router.put('/join-room/:userid/:roomid', (req, res) => {
-    const { userid, roomid } = req.params;
-    const getRoomSql = 'SELECT members FROM rooms WHERE room_id = ?';
-    db.query(getRoomSql, [roomid], (err, result) => {
-        if (err) {
-            console.error('Error fetching room data:', err);
-            return res.status(500).json({ error: 'Internal Server Error' });
-        }if (result.length === 0) {
-            return res.status(404).json({ error: 'Room not found' });
-        }
-        const currentMembers = JSON.parse(result[0].members || '[]');
+router.put('/room', async (req, res) => {
+    const { roomid, room_name, members, created_at, created_by } = req.body;
 
-        if (currentMembers.includes(userid)) {
-            return res.status(400).json({ error: 'User already in the room' });
-        }
+    // Validate the input data
+    if (!roomid || !room_name || !members || !created_by) {
+        return res.status(400).json({ error: "Missing required fields." });
+    }
 
-        currentMembers.push(userid);
+    try {
+        // Convert members array to JSON string
+        const membersJSON = JSON.stringify(members);
 
-        const updateRoomSql = 'UPDATE rooms SET members = ? WHERE room_id = ?';
+        // Update the room details, including members as JSON
+        const updateRoomQuery = `
+            UPDATE rooms
+            SET room_name = ?, members = ?, created_at = ?, created_by = ?
+            WHERE roomid = ?;
+        `;
+        await db.query(updateRoomQuery, [room_name, membersJSON, created_at, created_by, roomid]);
 
-        db.query(updateRoomSql, [JSON.stringify(currentMembers), roomid], (err, result) => {
-            if (err) {
-                console.error('Error updating room members:', err);
-                return res.status(500).json({ error: 'Internal Server Error' });
-            }
-
-            res.status(200).json({ message: 'User added to room successfully' });
-        });
-    });
+        // Respond with success
+        res.status(200).json({ message: "Room updated successfully!" });
+    } catch (error) {
+        console.error('Error updating room:', error);
+        res.status(500).json({ error: "An error occurred while updating the room." });
+    }
 });
 
 
