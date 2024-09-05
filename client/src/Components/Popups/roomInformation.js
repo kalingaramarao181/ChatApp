@@ -87,7 +87,6 @@ const RoomInformation = ({ openRoomInformation, setOpenRoomInformation, userId, 
             }));
         }
     }
-    console.log(userData);
     
 
     const handleUpdateRoom = () => {
@@ -114,8 +113,9 @@ const RoomInformation = ({ openRoomInformation, setOpenRoomInformation, userId, 
                         alt="Profile"
                         className="profile-picture"
                     />
-                    <div className="update-button">Update</div>
+                    <div className="update-button">Edit</div>
                 </div>
+                <div className='profile-main-content'>
                 <div className="profile-content">
                     <div className="profile-header">
                         <h1 className="profile-name">{userData.room_name}</h1>
@@ -161,7 +161,12 @@ const RoomInformation = ({ openRoomInformation, setOpenRoomInformation, userId, 
 
                     
                 </div>
-                {isSubmit ? <button onClick={handleUpdateRoom} className="edit-button">Submit</button> : <button onClick={() => setOpenRoomInformation(false)} className="edit-button">Close</button>}
+                <div className='edit-button-container'>
+                <button onClick={() => setOpenRoomInformation(false)} className="edit-button">Close</button>
+                {isSubmit && <button onClick={handleUpdateRoom} className="edit-button">Submit</button>}
+                </div>
+                
+                </div>
             </div>
         );
     };
@@ -180,7 +185,7 @@ const RoomInformation = ({ openRoomInformation, setOpenRoomInformation, userId, 
                     boxShadow: '0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
                     transition: 'opacity 0.5s ease-in-out',
                     backgroundColor: "white",
-                    height: "280px",
+                    height: "310px",
                     overflowY: "auto",
                     scrollbarWidth: "none",
                 }}

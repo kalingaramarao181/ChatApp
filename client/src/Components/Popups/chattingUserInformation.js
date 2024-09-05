@@ -4,7 +4,7 @@ import "./index.css"
 import axios from 'axios';
 import { baseUrl } from '../config';
 
-const UserInformation = ({ openUserInformation, setOpenUserInformation, userId }) => {
+const ChattingUserInformation = ({ openChattingUserInformation, setOpenChattingUserInformation, userId, setOpenEditUserInformation }) => {
     const [roomData, setroomData] = useState(null);
 
 
@@ -22,6 +22,7 @@ const UserInformation = ({ openUserInformation, setOpenUserInformation, userId }
 
 
 
+
     const roomDetails = () => {
         if (!roomData) {
             return <div>Loading...</div>;
@@ -34,12 +35,17 @@ const UserInformation = ({ openUserInformation, setOpenUserInformation, userId }
                         alt="Profile"
                         className="profile-picture"
                     />
-                    <div className="update-button">Update</div>
+                    <div
+                        onClick={() => {
+                            setOpenEditUserInformation(true)
+                            setOpenChattingUserInformation(false)
+                        }}
+                        className="update-button">Update</div>
                 </div>
                 <div className="profile-content">
                     <div className="profile-header">
                         <h1 className="profile-name">{roomData.fullname}</h1>
-                        
+
                     </div>
                     <p className="profile-location">{roomData.location}</p>
                     <div className="profile-details">
@@ -52,7 +58,7 @@ const UserInformation = ({ openUserInformation, setOpenUserInformation, userId }
                             <strong>Online Status:</strong> {roomData.loginstatus === 1 ? "Online" : roomData.lastseen}
                         </div>
                     </div>
-                    <button onClick={() => setOpenUserInformation(false)} className="edit-button">Close</button>
+                    <button onClick={() => setOpenChattingUserInformation(false)} className="edit-button">Close</button>
                 </div>
             </div>
         )
@@ -60,11 +66,11 @@ const UserInformation = ({ openUserInformation, setOpenUserInformation, userId }
 
     return (
         <>
-            {openUserInformation && <div className="blur-background" />}
+            {openChattingUserInformation && <div className="blur-background" />}
 
             <Popup
-                open={openUserInformation}
-                onClose={() => setOpenUserInformation(false)}
+                open={openChattingUserInformation}
+                onClose={() => setOpenChattingUserInformation(false)}
                 closeOnDocumentClick
                 contentStyle={{
                     width: "500px",
@@ -89,4 +95,4 @@ const UserInformation = ({ openUserInformation, setOpenUserInformation, userId }
     );
 };
 
-export default UserInformation;
+export default ChattingUserInformation;

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useDeviceType } from '../Functions/DeviceConverter';
 import EmojiPicker from 'emoji-picker-react';
 import UserInformation from '../Popups/userInformation';
+import ChattingUserInformation from '../Popups/chattingUserInformation';
 import { BsFillSendFill } from 'react-icons/bs';
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -24,6 +25,7 @@ import { TiGroup } from "react-icons/ti";
 import { baseUrl, showFileUrl } from '../config';
 import './index.css';
 import RoomInformation from '../Popups/roomInformation';
+import EditUserInformation from '../Popups/editUserInformation';
 
 const Dashboard = () => {
     const senderData = JSON.parse(localStorage.getItem('senderData')) || { id: 1, fullname: 'John Doe' };
@@ -41,7 +43,9 @@ const Dashboard = () => {
     const [unreadCounts, setUnreadCounts] = useState([]);
     const [chatUsersData, setChatUsersData] = useState([]);
     const [openUserInformation, setOpenUserInformation] = useState(false)
+    const [openEditUserInformation, setOpenEditUserInformation] = useState(false)
     const [openRoomInformation, setOpenRoomInformation] = useState(false)
+    const [openChattingUserInformation, setOpenChattingUserInformation] = useState(false)
     const [rooms, setRooms] = useState([]);
     const [viewEdit, setViewEdit] = useState(false)
     const [usersView, setUsersView] = useState(false)
@@ -261,7 +265,7 @@ const Dashboard = () => {
     };
 
     const handleMessageDelete = (messageId) => {
-        axios.post(`${baseUrl}${isRoom ? "delete-room-message" : "delete-message" }`, { messageId, userId: senderData.id })
+        axios.post(`${baseUrl}${isRoom ? "delete-room-message" : "delete-message"}`, { messageId, userId: senderData.id })
             .then((res) => {
                 setEditBarView(false);
                 fetchMessages(); // Fetch updated messages after deletion
@@ -394,7 +398,7 @@ const Dashboard = () => {
         return (
             <div className='dashboard-sidebar-main-container'>
                 <div className='sidebar-profile-container'>
-                    <h1 className='sidebar-profile-heading'>{senderData.fullname}</h1>
+                    <h1 style={{ cursor: "pointer" }} onClick={() => setOpenChattingUserInformation(prevState => !prevState)} className='sidebar-profile-heading'>{senderData.fullname}</h1>
                     <button type="button" onClick={() => { setUsersView(true); setIsExpanded(true) }} style={{ marginTop: '0px' }} className='sidebar-profile-icon'><IoPersonAddOutline /></button>
                 </div>
                 <div className={`container ${isExpanded ? 'expanded' : ''}`}>
@@ -505,10 +509,10 @@ const Dashboard = () => {
         if (!isRoom) {
             return (
                 <div className='chatted-user-details'>
-                <h1 style={{margin: "0px"}} className={clName}> {selectInput && <MdKeyboardBackspace onClick={() => setSelectInput(false)} className='back-arrow' />}{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
-                    {chattingUser.fullname && chattingUser.loginstatus ? <span className='last-seen-online'> Online</span> : <span className='last-seen'> Last seen at {chattingUser.lastseen ? formatAMPM(new Date(chattingUser.lastseen)) : chatUsersData.length >= 1 && formatAMPM(new Date(chatUsersData[0].lastseen))}</span>}
-                </h1>
-                <button onClick={() => setOpenUserInformation(true)} className='info-button'><IoIosInformationCircleOutline /></button>
+                    <h1 style={{ margin: "0px" }} className={clName}> {selectInput && <MdKeyboardBackspace onClick={() => setSelectInput(false)} className='back-arrow' />}{chattingUser.fullname ? chattingUser.fullname : chatUsersData.length >= 1 && chatUsersData[0].fullname}
+                        {chattingUser.fullname && chattingUser.loginstatus ? <span className='last-seen-online'> Online</span> : <span className='last-seen'> Last seen at {chattingUser.lastseen ? formatAMPM(new Date(chattingUser.lastseen)) : chatUsersData.length >= 1 && formatAMPM(new Date(chatUsersData[0].lastseen))}</span>}
+                    </h1>
+                    <button onClick={() => setOpenUserInformation(true)} className='info-button'><IoIosInformationCircleOutline /></button>
                 </div>
             )
         } else {
@@ -541,149 +545,155 @@ const Dashboard = () => {
         return user ? user.fullname : 'User not found';
     }
 
-    console.log(senderData.id);
-    
-    
-
-
     return (
         <>
-        <div className='dashboard-total-container'>
-            {usersView ? allUsers() : chattedUsers()}
-            <button className='swipe-button'>
-                {isMobile && chattingUserDetails('name-search')}
-                {isExpanded ? <FaCaretSquareUp onClick={toggleContainer} /> : <FaCaretSquareDown onClick={toggleContainer} />}
-            </button>
-            <div className='dashboard-chat-container'>
-                {!isMobile && chattingUserDetails('name-search-1')}
-                <div className='chat-container'>
-                    <div className='dashboard-chat-box-container'>
-                        {filteredMessages.map((eachMessage, index) => {
-                            const timeStamp = new Date(eachMessage.timestamp);
-                            const time = formatAMPM(timeStamp);
-                            const isSender = eachMessage.senderid === senderData.id;
-                            const isImage = eachMessage.file && /\.(jpg|jpeg|png|gif)$/i.test(eachMessage.file);
-                            return (
-                                <>
-                                    <div
-                                        key={index}
-                                        className="message-input-container"
-                                        style={{ alignSelf: isSender ? 'flex-end' : 'flex-start' }}
-                                    >
-                                        {selectInput && (
-                                            <input
-                                                className="select-input"
-                                                id={eachMessage.id}
-                                                onChange={onSelectMessage}
-                                                type="checkbox"
-                                            />
-                                        )}
-                                        <p
-                                            className={isSender ? 'message-sender' : 'message-receiver'}
-                                            onMouseEnter={() => setViewEdit(eachMessage.id)}
-                                            onMouseLeave={() => setViewEdit(false)}
-                                            style={{ display: "flex", flexDirection: "column" }}
+            <div className='dashboard-total-container'>
+                {usersView ? allUsers() : chattedUsers()}
+                <button className='swipe-button'>
+                    {isMobile && chattingUserDetails('name-search')}
+                    {isExpanded ? <FaCaretSquareUp onClick={toggleContainer} /> : <FaCaretSquareDown onClick={toggleContainer} />}
+                </button>
+                <div className='dashboard-chat-container'>
+                    {!isMobile && chattingUserDetails('name-search-1')}
+                    <div className='chat-container'>
+                        <div className='dashboard-chat-box-container'>
+                            {filteredMessages.map((eachMessage, index) => {
+                                const timeStamp = new Date(eachMessage.timestamp);
+                                const time = formatAMPM(timeStamp);
+                                const isSender = eachMessage.senderid === senderData.id;
+                                const isImage = eachMessage.file && /\.(jpg|jpeg|png|gif)$/i.test(eachMessage.file);
+                                return (
+                                    <>
+                                        <div
+                                            key={index}
+                                            className="message-input-container"
+                                            style={{ alignSelf: isSender ? 'flex-end' : 'flex-start' }}
                                         >
-                                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}} className='user-name-edit-container'>
-                                                {isRoom && <p style = {{margin: "0px", padding:"0px", fontSize: "10px", fontWeight: "bold"}}className='user-name-span'>{isSender ? "You" : userName(eachMessage.senderid)}</p>}
-                                                {viewEdit === eachMessage.id ? (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setEditBarView(prev => (prev === eachMessage.id ? false : eachMessage.id))}
-                                                        style={{ color: isSender ? 'white' : 'black' }}
-                                                        className="message-feature-button"
-                                                    >
-                                                        <FaRegEdit />
-                                                    </button>
-                                                ) : (
-                                                    <p className="message-feature-empty-button"></p>
-                                                )}
-                                            </div>
-                                            <div className='username-message-sender-container'>
-                                                {isImage ? (
-                                                    <div style={{ display: "flex", flexDirection: "column" }}>
-                                                        <img
-                                                            src={`${showFileUrl}${eachMessage.file}`}
-                                                            alt="Image-message"
-                                                            className="message-image"
-                                                            onClick={() => window.open(`${showFileUrl}${eachMessage.file}`, '_blank')}
-                                                        />
-                                                        <span style={{ marginTop: "5px" }} className="message-span">{eachMessage.message}</span>
-                                                    </div>
-                                                ) : eachMessage.file ? (
-                                                    <div className="file-container">
+                                            {selectInput && (
+                                                <input
+                                                    className="select-input"
+                                                    id={eachMessage.id}
+                                                    onChange={onSelectMessage}
+                                                    type="checkbox"
+                                                />
+                                            )}
+                                            <p
+                                                className={isSender ? 'message-sender' : 'message-receiver'}
+                                                onMouseEnter={() => setViewEdit(eachMessage.id)}
+                                                onMouseLeave={() => setViewEdit(false)}
+                                                style={{ display: "flex", flexDirection: "column" }}
+                                            >
+                                                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }} className='user-name-edit-container'>
+                                                    {isRoom && <p style={{ margin: "0px", padding: "0px", fontSize: "10px", fontWeight: "bold" }} className='user-name-span'>{isSender ? "You" : userName(eachMessage.senderid)}</p>}
+                                                    {viewEdit === eachMessage.id ? (
                                                         <button
+                                                            type="button"
+                                                            onClick={() => setEditBarView(prev => (prev === eachMessage.id ? false : eachMessage.id))}
                                                             style={{ color: isSender ? 'white' : 'black' }}
-                                                            className="file-link"
-                                                            onClick={() => window.open(`${showFileUrl}${eachMessage.file}`, '_blank')}
+                                                            className="message-feature-button"
                                                         >
-                                                            <span style={{ alignSelf: 'center' }}>
-                                                                <FaFileAlt className="file-image-icon" />
-                                                            </span>
-                                                            <span className="file-name">{eachMessage.file}</span>
+                                                            <FaRegEdit />
                                                         </button>
-                                                        <span style={{ marginTop: "5px" }} className="message-span">{eachMessage.message}</span>
-                                                    </div>
-                                                ) : (
-                                                    <span className="message-span">{eachMessage.message}</span>
-                                                )}
-                                                <div className="message-time-container">
-
-                                                    <span className="time-span">
-                                                        {time}
-                                                        {isSender && (
-                                                            eachMessage.read ? (
-                                                                <IoCheckmarkDone className="double-tik-blue" />
-                                                            ) : chattingUser.loginstatus ? (
-                                                                <IoCheckmarkDone className="double-tik" />
-                                                            ) : (
-                                                                <IoCheckmarkOutline className="single-tik" />
-                                                            )
-                                                        )}
-                                                    </span>
+                                                    ) : (
+                                                        <p className="message-feature-empty-button"></p>
+                                                    )}
                                                 </div>
-                                            </div>
-                                        </p>
-                                    </div>
-                                    {editBarView === eachMessage.id && messageFeatures(eachMessage)}
-                                </>
-                            );
-                        })}
-                        <div ref={chatEndRef} />
-                    </div>
-                    {showEmojiPicker && <div className='emoji-input'><EmojiPicker className='emoji-input' onEmojiClick={onEmojiClick} /></div>}
+                                                <div className='username-message-sender-container'>
+                                                    {isImage ? (
+                                                        <div style={{ display: "flex", flexDirection: "column" }}>
+                                                            <img
+                                                                src={`${showFileUrl}${eachMessage.file}`}
+                                                                alt="Image-message"
+                                                                className="message-image"
+                                                                onClick={() => window.open(`${showFileUrl}${eachMessage.file}`, '_blank')}
+                                                            />
+                                                            <span style={{ marginTop: "5px" }} className="message-span">{eachMessage.message}</span>
+                                                        </div>
+                                                    ) : eachMessage.file ? (
+                                                        <div className="file-container">
+                                                            <button
+                                                                style={{ color: isSender ? 'white' : 'black' }}
+                                                                className="file-link"
+                                                                onClick={() => window.open(`${showFileUrl}${eachMessage.file}`, '_blank')}
+                                                            >
+                                                                <span style={{ alignSelf: 'center' }}>
+                                                                    <FaFileAlt className="file-image-icon" />
+                                                                </span>
+                                                                <span className="file-name">{eachMessage.file}</span>
+                                                            </button>
+                                                            <span style={{ marginTop: "5px" }} className="message-span">{eachMessage.message}</span>
+                                                        </div>
+                                                    ) : (
+                                                        <span className="message-span">{eachMessage.message}</span>
+                                                    )}
+                                                    <div className="message-time-container">
 
-                </div>
-                <div className='dashboard-chat-main-container'>
-                    {selectInput ? inputBarSelectedFeaturesView() : isSelectMessageEdit ? inputBarEditView() : inputBarMessageView()}
-                    <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)} className='dashboard-text-emoji-button'>😀</button>
-                    <input type="file" id="fileUpload" onChange={handleFileChange} style={{ display: "none" }} />
-                    <label htmlFor="fileUpload" className='dashboard-file-button'>
-                        <GoFileMedia />
-                    </label>
-                    {selectedFile && (
-                        <div className='selected-image-container'>
-                            {previewUrl && (
-                                <img src={previewUrl} alt="Preview" className='selected-image' />
-                            )}
+                                                        <span className="time-span">
+                                                            {time}
+                                                            {isSender && (
+                                                                eachMessage.read ? (
+                                                                    <IoCheckmarkDone className="double-tik-blue" />
+                                                                ) : chattingUser.loginstatus ? (
+                                                                    <IoCheckmarkDone className="double-tik" />
+                                                                ) : (
+                                                                    <IoCheckmarkOutline className="single-tik" />
+                                                                )
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </p>
+                                        </div>
+                                        {editBarView === eachMessage.id && messageFeatures(eachMessage)}
+                                    </>
+                                );
+                            })}
+                            <div ref={chatEndRef} />
                         </div>
-                    )}
+                        {showEmojiPicker && <div className='emoji-input'><EmojiPicker className='emoji-input' onEmojiClick={onEmojiClick} /></div>}
+
+                    </div>
+                    <div className='dashboard-chat-main-container'>
+                        {selectInput ? inputBarSelectedFeaturesView() : isSelectMessageEdit ? inputBarEditView() : inputBarMessageView()}
+                        <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)} className='dashboard-text-emoji-button'>😀</button>
+                        <input type="file" id="fileUpload" onChange={handleFileChange} style={{ display: "none" }} />
+                        <label htmlFor="fileUpload" className='dashboard-file-button'>
+                            <GoFileMedia />
+                        </label>
+                        {selectedFile && (
+                            <div className='selected-image-container'>
+                                {previewUrl && (
+                                    <img src={previewUrl} alt="Preview" className='selected-image' />
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
+                <UserInformation
+                    openUserInformation={openUserInformation}
+                    setOpenUserInformation={setOpenUserInformation}
+                    userId={chattingUser.id}
+                    isRoom={isRoom}
+                />
+                <RoomInformation
+                    openRoomInformation={openRoomInformation}
+                    setOpenRoomInformation={setOpenRoomInformation}
+                    userId={chattingUser.roomid}
+                    isRoom={isRoom}
+                    senderId={senderData.id}
+                />
+                <ChattingUserInformation
+                    openChattingUserInformation={openChattingUserInformation}
+                    setOpenChattingUserInformation={setOpenChattingUserInformation}
+                    setOpenEditUserInformation={setOpenEditUserInformation}
+                    userId={senderData.id}
+                />
+                <EditUserInformation
+                    openEditUserInformation={openEditUserInformation}
+                    setOpenEditUserInformation={setOpenEditUserInformation}
+                    userId={senderData.id}
+                />
             </div>
-            <UserInformation
-                openUserInformation={openUserInformation}
-                setOpenUserInformation={setOpenUserInformation}
-                userId={chattingUser.id}
-                isRoom={isRoom}
-            />
-            <RoomInformation
-                openRoomInformation={openRoomInformation}
-                setOpenRoomInformation={setOpenRoomInformation}
-                userId={chattingUser.roomid}
-                isRoom={isRoom}
-                senderId={senderData.id}
-            />
-        </div>
         </>
     );
 };
